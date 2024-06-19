@@ -1,0 +1,19 @@
+{
+  "name": "s421-routeexchange",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Client-side parsing and rendering of S-421 Route Exchange data.",
+  "main": "XMLparser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/xml2js": "^0.4.14"
+  }
+}
