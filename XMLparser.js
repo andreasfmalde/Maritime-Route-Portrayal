@@ -4,7 +4,7 @@ import xml2js from 'xml2js';
 
 
 
-fs.readFile('RTE-TEST-SAMPLE.s421', 'utf-8', (err, data) => {
+fs.readFile('./SampleFiles/Cruise_Stavanger_Feistein_Out.s421', 'utf-8', (err, data) => {
     if(err) {
         console.log(err);
     } else {
@@ -14,7 +14,7 @@ fs.readFile('RTE-TEST-SAMPLE.s421', 'utf-8', (err, data) => {
                 console.log(err);
             } else {
                 recursiveNamespaceTrimmer(result);
-                console.log(JSON.stringify(result.Dataset.member[0],null,2))
+                console.log(JSON.stringify(result,null,2))
             }
         });
     }

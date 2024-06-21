@@ -1,0 +1,1357 @@
+{
+  "Dataset": {
+    "$": {
+      "S421": "http://www.iho.int/S421/gml/cs0/1.0",
+      "S100": "http://www.iho.int/s100gml/1.0",
+      "S100_profile": "http://www.iho.int/S-100/profile/s100_gmlProfile",
+      "gml": "http://www.opengis.net/gml/3.2",
+      "xlink": "http://www.w3.org/1999/xlink",
+      "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+      "id": "S421.TST.GFULL.00001",
+      "schemaLocation": "http://www.iho.int/S421/gml/cs0/1.0../schemas/S421/FMT/1.0.0/20210319/S421.xsd"
+    },
+    "member": [
+      {
+        "Route": [
+          {
+            "$": {
+              "id": "RTE"
+            },
+            "routeFormatVersion": [
+              "1.0"
+            ],
+            "routeID": [
+              "1234"
+            ],
+            "routeEditionNo": [
+              "2"
+            ],
+            "routeInfo": [
+              {
+                "$": {
+                  "arcrole": "routeInfo",
+                  "href": "#RTE.INFO"
+                }
+              }
+            ],
+            "routeWaypoints": [
+              {
+                "$": {
+                  "arcrole": "routeWaypoint",
+                  "href": "#RTE.WPTS"
+                }
+              }
+            ],
+            "routeSchedules": [
+              {
+                "$": {
+                  "arcrole": "routeSchedules",
+                  "href": "#RTE.SCHEDS"
+                }
+              }
+            ],
+            "routeActionPoints": [
+              {
+                "$": {
+                  "arcrole": "routeActionPoints",
+                  "href": "#RTE.APTS"
+                }
+              }
+            ],
+            "routeExtensions": [
+              {
+                "routeExtensionsNote": [
+                  "{manufacturer=Norwegian Coastal Administration, fullName=Cruise Stavanger - Feistein Outbound, productinfo=See information on www.routeinfo.no before use of this Reference Route for Navigation. The Reference Routes from NCA can be used as base in route planning. For routes with no comments on vessel size, 150 meter length and 9 meter draught has been used to quality assure the routes. Limitations in size of vessel may vary along the route caused by regulation or depths., routeNumber=NO-380004, StmDirection=NO DIRECTION, StmRelativeToShortestDistance=0, StmPointDistanceLimitPilotRoute=0, StmPointDistanceRtz=0, StmMaxBearingDistance=0}"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoints": [
+          {
+            "$": {
+              "id": "RTE"
+            },
+            "routeWaypointsCollection": [
+              {
+                "$": {
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypoint": [
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.1"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.2"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.3"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.4"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.5"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.6"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.7"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.8"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.9"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.10"
+                }
+              },
+              {
+                "$": {
+                  "arcrole": "http://www.iho.int/S-421/gml/1.0/roles/consistsOfRouteWaypoint",
+                  "href": "#RTE.WPTS.WPT.11"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.1"
+            },
+            "geometry": [
+              ""
+            ],
+            "routeWaypointID": [
+              "0"
+            ],
+            "routeWaypointName": [
+              ""
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "0.1"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.1"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.1"
+            },
+            "routeWaypointLegSafetyContour": [
+              "30.0"
+            ],
+            "routeWaypointLegSafetyDepth": [
+              "30.0"
+            ],
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.2"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.2.PT"
+                        },
+                        "pos": [
+                          "58.97756611 5.72598921"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "4"
+            ],
+            "routeWaypointName": [
+              "Stavanger"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "0.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.2"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.3"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.3.PT"
+                        },
+                        "pos": [
+                          "58.98633212 5.71134896"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "18"
+            ],
+            "routeWaypointName": [
+              "Ulsnesgrunnen"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.3"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.3"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.4"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.4.PT"
+                        },
+                        "pos": [
+                          "59.0034202 5.69128408"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "19"
+            ],
+            "routeWaypointName": [
+              "Dusaviga"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.4"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.4"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.5"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.5.PT"
+                        },
+                        "pos": [
+                          "59.03169439 5.62475297"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "5"
+            ],
+            "routeWaypointName": [
+              "Mekjarvik"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.5"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.5"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.6"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.6.PT"
+                        },
+                        "pos": [
+                          "59.06223487 5.57044147"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "6"
+            ],
+            "routeWaypointName": [
+              "Bragen"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.6"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.6"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.7"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.7.PT"
+                        },
+                        "pos": [
+                          "59.03719746 5.53981905"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "7"
+            ],
+            "routeWaypointName": [
+              "Bragen"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.7"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.7"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.8"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.8.PT"
+                        },
+                        "pos": [
+                          "59.01186667 5.53968815"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "21"
+            ],
+            "routeWaypointName": [
+              ""
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.8"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.8"
+            },
+            "routeWaypointLegSafetyContour": [
+              "20.0"
+            ],
+            "routeWaypointLegSafetyDepth": [
+              "20.0"
+            ],
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.9"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.9.PT"
+                        },
+                        "pos": [
+                          "58.97867789 5.55214898"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "20"
+            ],
+            "routeWaypointName": [
+              "Bjoernaflua"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.9"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.9"
+            },
+            "routeWaypointLegSafetyContour": [
+              "20.0"
+            ],
+            "routeWaypointLegSafetyDepth": [
+              "20.0"
+            ],
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.10"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.10.PT"
+                        },
+                        "pos": [
+                          "58.92876049 5.54681321"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "17"
+            ],
+            "routeWaypointName": [
+              "Midtfjaera"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.10"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.10"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.11"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.11.PT"
+                        },
+                        "pos": [
+                          "58.86141213 5.50703709"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "10"
+            ],
+            "routeWaypointName": [
+              "Soerskot"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.11"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.11"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteWaypoint": [
+          {
+            "$": {
+              "id": "RTE.WPT.12"
+            },
+            "geometry": [
+              {
+                "pointProperty": [
+                  {
+                    "Point": [
+                      {
+                        "$": {
+                          "srsName": "EPSG:4258",
+                          "id": "RTE.WPT.12.PT"
+                        },
+                        "pos": [
+                          "58.7985905 5.38983562"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "routeWaypointID": [
+              "12"
+            ],
+            "routeWaypointName": [
+              "Skotemedgrunnen"
+            ],
+            "routeWaypointExternalReferenceID": [
+              ""
+            ],
+            "routeWaypointFixed": [
+              "false"
+            ],
+            "routeWaypointTurnRadius": [
+              "1.0"
+            ],
+            "routeWaypointCollection": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointCollection",
+                  "href": "RTE"
+                }
+              }
+            ],
+            "routeWaypointLeg": [
+              {
+                "$": {
+                  "arcrole": "routeWaypointLeg",
+                  "href": "#RTE.WPT.LEG.12"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "routeWaypointLeg": [
+          {
+            "$": {
+              "id": "RTE.WPT.LEG.12"
+            },
+            "routeWaypointLegDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegAirDraftMax": [
+              "0.0"
+            ],
+            "routeWaypointLegLengthMax": [
+              "0.0"
+            ],
+            "routeWaypointLegNote": [
+              ""
+            ],
+            "routeWaypointLegIssue": [
+              ""
+            ],
+            "routeWaypointLegExtensions": [
+              ""
+            ]
+          }
+        ]
+      }
+    ],
+    "imember": [
+      {
+        "RouteInfo": [
+          {
+            "$": {
+              "id": "RTE.INFO"
+            },
+            "routeInfoName": [
+              "Test"
+            ],
+            "routeInfoAuthor": [
+              ""
+            ],
+            "routeInfoEditionTime": [
+              "2022-10-17T02:00:00+02:00"
+            ],
+            "routeInfoDescription": [
+              ""
+            ],
+            "routeInfoStatus": [
+              "1"
+            ],
+            "routeInfoValidityStart": [
+              "2022-10-17T02:00:00+02:00"
+            ],
+            "routeInfoValidityEnd": [
+              "2024-04-04T02:00:00+02:00"
+            ],
+            "routeInfoDeparturePortID1": [
+              ""
+            ],
+            "routeInfoDeparturePortID2": [
+              ""
+            ],
+            "routeInfoDeparturePortCall": [
+              ""
+            ],
+            "routeInfoArrivalPortID1": [
+              ""
+            ],
+            "routeInfoArrivalPortID2": [
+              ""
+            ],
+            "routeInfoArrivalPortCall": [
+              ""
+            ],
+            "routeInfoReferencePrevRoute": [
+              ""
+            ],
+            "routeInfoReferenceNextRoute": [
+              ""
+            ],
+            "routeInfoVesselType": [
+              ""
+            ],
+            "routeInfoVesselName": [
+              "Norwegian Coastal Administration"
+            ],
+            "routeInfoVesselMMSI": [
+              "0"
+            ],
+            "routeInfoVesselCallsign": [
+              ""
+            ],
+            "routeInfoVesselIMO": [
+              "0"
+            ],
+            "routeInfoVesselVoyage": [
+              "NO-380004"
+            ],
+            "routeInfoVesselHeight": [
+              "0.0"
+            ],
+            "routeInfoVesselLength": [
+              "0.0"
+            ],
+            "routeInfoVesselBeam": [
+              "0.0"
+            ],
+            "routeInfoDraftMax": [
+              "0.0"
+            ],
+            "routeInfoAirDraftMax": [
+              "0.0"
+            ],
+            "routeInfoBeamMax": [
+              "0.0"
+            ],
+            "routeInfoLengthMax": [
+              "0.0"
+            ]
+          }
+        ]
+      },
+      {
+        "RouteActionPoints": [
+          {
+            "$": {
+              "id": "RTE.APTS"
+            },
+            "routeActionPoint": [
+              ""
+            ]
+          }
+        ]
+      },
+      {
+        "RouteSchedules": [
+          {
+            "$": {
+              "id": "RTE.SCHED"
+            },
+            "routeSchedule": [
+              {
+                "$": {
+                  "arcrole": "routeSchedule",
+                  "href": "#RTE.SCHED.1"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "RouteSchedule": [
+          {
+            "$": {
+              "id": "RTE.SCHEDS.1"
+            },
+            "routeScheduleCollection": [
+              {
+                "$": {
+                  "arcrole": "routeScheduleCollection",
+                  "href": "#RTE.SCHEDS"
+                }
+              }
+            ],
+            "routeScheduleID": [
+              "0"
+            ],
+            "routeScheduleName": [
+              "Base Calculation"
+            ],
+            "routeScheduleManual": [
+              {
+                "$": {
+                  "arcrole": "routeScheduleManual",
+                  "href": "#RTE.SCHED.1.MAN"
+                }
+              }
+            ],
+            "routeScheduleCalculated": [
+              {
+                "$": {
+                  "arcrole": "routeScheduleCalculated",
+                  "href": "#RTE.SCHED.1.CAL"
+                }
+              }
+            ],
+            "routeScheduleRecommended": [
+              ""
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
