@@ -27,3 +27,10 @@ export function recursiveNamespaceTrimmer(obj){
         }
     }
 }
+
+
+export function getCoordinates(point){
+    let coord = point.split(' ');
+    // Longitude first then latitude. Following GeoJSON standard
+    return [parseFloat(coord[1]), parseFloat(coord[0])];
+}
