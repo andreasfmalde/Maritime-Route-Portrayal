@@ -28,7 +28,7 @@ const map = new maplibregl.Map({
     zoom: 10 // strting zoom
 })
 
-import {route }from '../route.js';
+import { S421ToGeoJSON }from '../converter.js';
 
 map.on('load', () => {
     map.addSource('geojsonSource', {
