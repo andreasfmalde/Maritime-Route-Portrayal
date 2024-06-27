@@ -74,6 +74,9 @@ export async function S421ToGeoJSON(filename) {
 function S421RouteWaypointToGeoJSON(waypoint) {
     if (waypoint.geometry[0] instanceof Object) {
         const coordinates = getCoordinates(waypoint.geometry[0].pointProperty[0].Point[0].pos[0]);
+        if (coordinates[0] == NaN || coordinates[1] == NaN) {
+            return null;
+        }
         return turf.point(coordinates, {
             type: "waypoint",
             id: parseInt(waypoint.routeWaypointID[0]),

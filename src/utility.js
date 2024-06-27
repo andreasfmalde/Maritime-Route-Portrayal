@@ -32,7 +32,10 @@ export function recursiveNamespaceTrimmer(obj){
 export function getCoordinates(point){
     let coord = point.split(' ');
     // Longitude first then latitude. Following GeoJSON standard
-    return [parseFloat(coord[1]), parseFloat(coord[0])];
+    if(coord.length > 2){
+        coord = coord.filter(c => c !== '');
+    }
+    return coord.length === 2 ? [parseFloat(coord[1]), parseFloat(coord[0])]: [NaN, NaN];
 }
 
 export function writeJSONFile(content, filename){
