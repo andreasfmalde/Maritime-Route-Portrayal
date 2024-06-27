@@ -1,4 +1,4 @@
-
+import {route} from './route.js';
 const style = {
     "version": 8,
       "sources": {
@@ -28,12 +28,28 @@ const map = new maplibregl.Map({
     zoom: 10 // strting zoom
 })
 
-import { S421ToGeoJSON }from '../converter.js';
+let geojson;
+
+try{
+    await fetch('./route.json')
+    .then(response => response.json())
+    .then(data => {
+        if (data == null){
+            throw new Error('No data');
+        }
+        geojson = data;
+    });
+    document.querySelector('#info').textContent = '';
+}catch(e){
+    geojson = route;
+    document.querySelector('#info').textContent = 'No route.json file found, using default route. Run converter.js to generate a route.json file.';
+}
+
 
 map.on('load', () => {
     map.addSource('geojsonSource', {
         'type': 'geojson',
-        'data': route
+        'data': geojson
     });
 
     
@@ -58,7 +74,7 @@ map.on('load', () => {
         'source': 'geojsonSource',
         'filter': ['==', '$type', 'Point'],
         'paint': {
-            'circle-radius': 6,
+            'circle-radius': 3,
             'circle-color': '#B42222'
         }
     }); 

@@ -1,4 +1,4 @@
-
+import fs from 'fs';
 
 
 export function nameSpaceTrimmer(str){
@@ -33,4 +33,8 @@ export function getCoordinates(point){
     let coord = point.split(' ');
     // Longitude first then latitude. Following GeoJSON standard
     return [parseFloat(coord[1]), parseFloat(coord[0])];
+}
+
+export function writeJSONFile(content, filename){
+    fs.writeFileSync(filename, JSON.stringify(content, null, 2));
 }

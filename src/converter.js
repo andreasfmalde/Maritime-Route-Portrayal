@@ -1,45 +1,80 @@
 import { S421toJSON } from "./XMLparser.js";
 import * as turf from '@turf/turf';
-import { getCoordinates } from "./utility.js";
+import { getCoordinates, writeJSONFile } from "./utility.js";
 
 
-export async function S421ToGeoJSON(filename){
-    try{
+export async function S421ToGeoJSON(filename) {
+    try {
 
         const route = await S421toJSON(filename);
+        const geoJSON = turf.featureCollection([]);
 
         // Convert waypoints to GeoJSON
-        let waypoints = [];
-        for (let obj of route.Dataset.member){
-            if ('RouteWaypoint' in obj){
+        const waypoints = [];
+        for (let obj of route.Dataset.member) {
+            if ('RouteWaypoint' in obj) {
                 const WP = S421RouteWaypointToGeoJSON(obj.RouteWaypoint[0])
-                if (WP != null){
+                if (WP != null) {
                     waypoints.push(WP);
                 }
             }
         }
-        let geoJSON = turf.featureCollection([]);
-        for (let i = 1; i < waypoints.length - 1; i++){
-            const [circleCenter, tanget1, tangent2] = curveWayPointLeg(waypoints[i-1], waypoints[i], waypoints[i+1]);
-            geoJSON.features.push(circleCenter,tanget1, tangent2);
+
+        for (let i = 1; i < waypoints.length - 1; i++) {
+            const [circleCenter, tanget1, tangent2] = curveWaypointLeg(waypoints[i - 1], waypoints[i], waypoints[i + 1]);
+            if (circleCenter == null) {
+                geoJSON.features.push(tanget1, tangent2);
+            } else {
+                geoJSON.features.push(circleCenter, tanget1, tangent2);
+            }
+
         }
+
+        // Filter out the tangents and add leg lines between the curves
+        const legs = [];
+
+        geoJSON.features
+            .filter(feature => (feature.geometry.type === "Point" && feature.properties.type === "tangent"))
+            .forEach(point => {
+                let linkedTo = point.properties.linkedTo;
+                let linkedPoint = geoJSON.features.find(feature => feature.properties.waypoint === linkedTo && feature.properties.linkedTo === point.properties.waypoint);
+                if (linkedPoint != undefined) {
+                    //console.log([point.geometry.coordinates, linkedPoint.geometry.coordinates])
+                    let ID = `${point.properties.waypoint}-${linkedPoint.properties.waypoint}`;
+                    let reversedID = `${linkedPoint.properties.waypoint}-${point.properties.waypoint}`;
+                    if (!legs.includes(ID) && !legs.includes(reversedID)) {
+                        geoJSON.features.push(turf.lineString([point.geometry.coordinates, linkedPoint.geometry.coordinates]))
+                        legs.push(ID)
+                    }
+                }
+                if (point.properties.linkedTo === waypoints[0].properties.id) {
+                    geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, point.geometry.coordinates]))
+                } else if (point.properties.linkedTo === waypoints[waypoints.length - 1].properties.id) {
+                    geoJSON.features.push(turf.lineString([waypoints[waypoints.length - 1].geometry.coordinates, point.geometry.coordinates]))
+                }
+            });
+
+
+
+
+        // Delete all the tangent points from the geoJSON feature collection
+        geoJSON.features = geoJSON.features.filter(feature => !(feature.geometry.type === "Point" && feature.properties.type === "tangent"))
+
 
         return geoJSON;
 
 
-    }catch(err){
+    } catch (err) {
         console.log(err);
         return null;
     }
 }
 
 // TODO: Some waypoints do not have coordinates, need to handle this
-function S421RouteWaypointToGeoJSON(waypoint){
-    //console.log(waypoint.geometry[0]);
-    
-    if (waypoint.geometry[0] instanceof Object){
+function S421RouteWaypointToGeoJSON(waypoint) {
+    if (waypoint.geometry[0] instanceof Object) {
         const coordinates = getCoordinates(waypoint.geometry[0].pointProperty[0].Point[0].pos[0]);
-        return turf.point(coordinates,{
+        return turf.point(coordinates, {
             type: "waypoint",
             id: parseInt(waypoint.routeWaypointID[0]),
             radius: parseFloat(waypoint.routeWaypointTurnRadius[0])
@@ -50,16 +85,12 @@ function S421RouteWaypointToGeoJSON(waypoint){
 
 
 
-function curveWayPointLeg(W1, W2, W3) {
+function curveWaypointLeg(W1, W2, W3) {
     // No curve is needed if the turn radius is 0 or less
     if (W2.properties.radius <= 0.0) {
-        return turf.featureCollection([
-            W1,
-            W2,
-            W3,
-            turf.lineString([W1.geometry.coordinates, W2.geometry.coordinates]),
-            turf.lineString([W2.geometry.coordinates, W3.geometry.coordinates])
-        ]);
+        const t1 = turf.point(W2.geometry.coordinates, { "type": "tangent", "waypoint": W2.properties.id, "number": 1, "linkedTo": W1.properties.id });
+        const t2 = turf.point(W2.geometry.coordinates, { "type": "tangent", "waypoint": W2.properties.id, "number": 2, "linkedTo": W3.properties.id });
+        return [null, t1, t2];
     }
     // Create imaginary lines between the waypoints
     const line1 = turf.lineString([W1.geometry.coordinates, W2.geometry.coordinates]);
@@ -67,31 +98,29 @@ function curveWayPointLeg(W1, W2, W3) {
     // Calculate the bearings
     const bearing21 = turf.bearing(W2, W1);
     const bearing23 = turf.bearing(W2, W3);
-
     // Calculate the midline bearing
     let midLineBearing = calculateMidLineBearing(bearing21, bearing23);
 
     // Calculate the circle center and the tangent points between the circle and the imaginary lines
-    const [circleCenter, tangent1, tangent2] = findCircleCenter(midLineBearing, W2, line1, line2);
+    const [circleCenter, tangent1, tangent2] = calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2);
 
     // Calculate bearing from circle center to tangent points
     const cBearing1 = turf.bearing(circleCenter, tangent1);
     const cBearing2 = turf.bearing(circleCenter, tangent2);
-    
+
     // Confirm that the order of the bearings is correct for drawing the circle arc
     const [b1, b2] = determineBearingOrder(cBearing1, cBearing2);
 
     // Specify the tangent points, making it easier to delete them later
     tangent1.properties = { "type": "tangent", "waypoint": W2.properties.id, "number": 1, "linkedTo": W1.properties.id };
-    tangent2.properties = { "type": "tangent", "waypoint": W2.properties.id, "number": 2, "linkedTo": W3.properties.id};
+    tangent2.properties = { "type": "tangent", "waypoint": W2.properties.id, "number": 2, "linkedTo": W3.properties.id };
 
-
+    // Create the lineString for the circle arc
     const circleArc = turf.lineArc(circleCenter, W2.properties.radius, b1, b2, { steps: 100 });
-
     return [
         circleArc,
         tangent1,
-        tangent2 
+        tangent2
     ];
 }
 
@@ -109,17 +138,17 @@ function determineBearingOrder(b1, b2) {
     let difference = b2 - b1;
 
     if (difference > 180) {
-        // Da differansen er større enn 180, så vil den korteste vinkelen/veien gå gjennom 0 grader N.
-        // Returnerer derfor den største vinkelen først, deretter den minste
+        // The difference is greater than 180, so the shortest way/angle is through 0 degrees N.
+        // Therefore, the largest angle will be returned first, then the smallest
         return [convertToNorthBearing(b2), convertToNorthBearing(b1)];
     } else {
-        // Da differansen er mindre enn 180, vil den minste vinkelen returneres først, deretter den største
+        // The difference is less than 180, so the smallest angle will be returned first, then the larger one
         return [convertToNorthBearing(b1), convertToNorthBearing(b2)];
     }
 }
 
 
-function findCircleCenter(midLineBearing, W2, line1, line2) {
+function calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2) {
     let circleCenter, circle, difference, t1, t2;
     let distance = 30; // Distance from W2 to circle center in km. Can be improved to be dynamic
     let previousDistance = distance * 2;
@@ -136,10 +165,8 @@ function findCircleCenter(midLineBearing, W2, line1, line2) {
             // Decrease the distance
             previousDistance = distance;
             distance -= difference * 0.5;
-            //console.log(`Found 0: ${previousDistance}`)
         } else if (t1.features.length === 1 && t2.features.length === 1) {
             // Increase the distance
-            //console.log(`Found ${t1.features.length} and ${t2.features.length}: ${distance}`)
             previousDistance = distance;
             distance += difference * 0.5;
         }
@@ -148,7 +175,6 @@ function findCircleCenter(midLineBearing, W2, line1, line2) {
                 // Intersections are found that satisfy the conditions
                 break;
             }
-            //console.log(`Found ${t1.features.length} and ${t2.features.length}: ${previousDistance}`)
             previousDistance = distance;
             distance += difference * 0.5;
         }
@@ -176,7 +202,7 @@ function calculateMidLineBearing(bearing1, bearing2) {
         b2 = temp;
     }
 
-    let difference = b2 - b1;
+    const difference = b2 - b1;
 
     if (difference > 180) {
         let angle = (b1 + difference / 2) % 360;
@@ -204,5 +230,19 @@ function convertToNorthBearing(bearing) {
 
 
 
+// Main entry point of application
+async function main(){
+    try{
+        const json = await S421ToGeoJSON('/Users/andreas/Desktop/S-421/TestData/RTE-TEST-GFULL.s421.gml');
+        if(json == null){
+            throw new Error('Conversion failed');
+        }
+        writeJSONFile(json, './client/route.json');
+    }catch(e){
+        console.log(`Something went wrong... Error: ${e}`);
+    }
+    
+}
+
 // Run the code
-S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
+main();
