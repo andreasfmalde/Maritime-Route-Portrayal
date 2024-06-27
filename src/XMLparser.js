@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { recursiveNamespaceTrimmer } from './utility.js';
-import xml2js from 'xml2js';
+import xmljs from 'xml-js';
 
 function readXML(filename){
     return new Promise((resolve, reject) => {
@@ -15,24 +15,10 @@ function readXML(filename){
 }
 
 
-function XMLtoJSON(data){
-    return new Promise((resolve, reject) => {
-        const parser = new xml2js.Parser();
-        parser.parseString(data, (err, result) => {
-            if(err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
-
-
 export async function S421toJSON(filename){
     try{
         const xml = await readXML(filename);
-        const object = await XMLtoJSON(xml);
+        const object = JSON.parse(xmljs.xml2json(xml, {compact: true, spaces: 4}));
         recursiveNamespaceTrimmer(object);
         return object;
     } catch (err) {

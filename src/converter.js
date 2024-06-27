@@ -13,7 +13,7 @@ export async function S421ToGeoJSON(filename) {
         const waypoints = [];
         for (let obj of route.Dataset.member) {
             if ('RouteWaypoint' in obj) {
-                const WP = S421RouteWaypointToGeoJSON(obj.RouteWaypoint[0])
+                const WP = S421RouteWaypointToGeoJSON(obj.RouteWaypoint)
                 if (WP != null) {
                     waypoints.push(WP);
                 }
@@ -77,15 +77,15 @@ export async function S421ToGeoJSON(filename) {
 
 // TODO: Some waypoints do not have coordinates, need to handle this
 function S421RouteWaypointToGeoJSON(waypoint) {
-    if (waypoint.geometry[0] instanceof Object) {
-        const coordinates = getCoordinates(waypoint.geometry[0].pointProperty[0].Point[0].pos[0]);
+    if (Object.keys(waypoint.geometry).length > 0) {
+        const coordinates = getCoordinates(waypoint.geometry.pointProperty.Point.pos._text);
         if (coordinates[0] == NaN || coordinates[1] == NaN) {
             return null;
         }
         return turf.point(coordinates, {
             type: "waypoint",
-            id: parseInt(waypoint.routeWaypointID[0]),
-            radius: parseFloat(waypoint.routeWaypointTurnRadius[0])
+            id: parseInt(waypoint.routeWaypointID._text),
+            radius: parseFloat(waypoint.routeWaypointTurnRadius._text)
         });
     }
     return null;
@@ -241,7 +241,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('/Users/andreas/Desktop/S-421/TestData/RTE-TEST-GMIN.s421.gml');
+        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-SAMPLE.s421');
         if(json == null){
             throw new Error('Conversion failed');
         }
