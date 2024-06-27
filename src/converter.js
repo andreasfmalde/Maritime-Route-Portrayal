@@ -20,6 +20,11 @@ export async function S421ToGeoJSON(filename) {
             }
         }
 
+        if (waypoints.length === 2){
+            geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, waypoints[1].geometry.coordinates]));
+            return geoJSON;
+        }
+
         for (let i = 1; i < waypoints.length - 1; i++) {
             const [circleCenter, tanget1, tangent2] = curveWaypointLeg(waypoints[i - 1], waypoints[i], waypoints[i + 1]);
             if (circleCenter == null) {
@@ -236,7 +241,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('/Users/andreas/Desktop/S-421/TestData/RTE-TEST-GFULL.s421.gml');
+        const json = await S421ToGeoJSON('/Users/andreas/Desktop/S-421/TestData/RTE-TEST-GMIN.s421.gml');
         if(json == null){
             throw new Error('Conversion failed');
         }
