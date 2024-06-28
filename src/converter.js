@@ -11,11 +11,19 @@ export async function S421ToGeoJSON(filename) {
 
         // Convert waypoints to GeoJSON
         const waypoints = [];
+        const actionPoints = [];
+
         for (let obj of route.Dataset.member) {
             if ('RouteWaypoint' in obj) {
                 const WP = S421RouteWaypointToGeoJSON(obj.RouteWaypoint)
                 if (WP != null) {
                     waypoints.push(WP);
+                }
+            }
+            if ('RouteActionPoint' in obj) {
+                const AP = S421RouteActionpointToGeoJSON(obj.RouteActionPoint);
+                if (AP != null) {
+                    actionPoints.push(AP);
                 }
             }
         }
@@ -59,9 +67,6 @@ export async function S421ToGeoJSON(filename) {
                 }
             });
 
-
-
-
         // Delete all the tangent points from the geoJSON feature collection
         geoJSON.features = geoJSON.features.filter(feature => !(feature.geometry.type === "Point" && feature.properties.type === "tangent"))
 
@@ -91,6 +96,23 @@ function S421RouteWaypointToGeoJSON(waypoint) {
     return null;
 }
 
+
+function S421RouteActionpointToGeoJSON(actionPoint){
+    switch(Object.getOwnPropertyNames(actionPoint.geometry)[0]){
+        case 'pointProperty':
+            console.log('Point action point');
+            break;
+        case 'curveProperty':
+            console.log('Curve action point'); 
+            break;
+        case 'surfaceProperty':
+            console.log('Surface action point');
+            break;
+        default:
+            console.log('Unknown action point');
+    }
+    console.log(Object.getOwnPropertyNames(actionPoint.geometry));
+}
 
 
 function curveWaypointLeg(W1, W2, W3) {
@@ -241,7 +263,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-SAMPLE.s421');
+        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
         if(json == null){
             throw new Error('Conversion failed');
         }

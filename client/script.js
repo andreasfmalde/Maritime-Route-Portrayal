@@ -4,9 +4,9 @@ const style = {
       "sources": {
       "osm": {
               "type": "raster",
-              "tiles": ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+              "tiles": ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"],
               "tileSize": 256,
-        "attribution": "&copy; OpenStreetMap Contributors",
+        "attribution": "&copy; ArcGis",
         "maxzoom": 19
       }
     },
@@ -17,7 +17,7 @@ const style = {
         "source": "osm" // This must match the source key above
       }
     ]
-  };
+};
 
 
 
@@ -63,8 +63,9 @@ map.on('load', () => {
             'line-cap': 'round'
         },
         'paint': {
-            'line-color': '#000000',
-            'line-width': 2
+            'line-color': '#D63F24',
+            'line-width': 0.64,
+            'line-dasharray':[0,2.2,10,2,10]
         }
     }); 
 
