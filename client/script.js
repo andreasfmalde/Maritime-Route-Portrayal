@@ -62,12 +62,12 @@ map.on('load', async () => {
         'data': geojson
     });
 
-    
+    // ROUTE-LEG LINE STRING
     map.addLayer({
         'id': 'geojsonLayerLine',
         'type': 'line',
         'source': 'geojsonSource',
-        'filter': ['==', '$type', 'LineString'],
+        'filter': ['==', 'type', 'route-leg'],
         'layout': {
             'line-join': 'round',
             'line-cap': 'round'
@@ -79,6 +79,7 @@ map.on('load', async () => {
         }
     }); 
 
+    // WAYPOINT SYMBOL
     map.addLayer({
         'id': 'waypoint-symbol',
         'type': 'symbol',
@@ -90,6 +91,7 @@ map.on('load', async () => {
         }
 
     });
+    // ACTIOPPOINT SYMBOL
     map.addLayer({
         'id':'actionpoint-symbol',
         'type': 'symbol',
@@ -110,21 +112,40 @@ map.on('load', async () => {
         }
     });
 
-    /*
+    // ACTIONPOINT LINE STRING
     map.addLayer({
-        'id': 'text-layer',
-        'type': 'symbol',
+        'id':'actionpoint-line',
+        'type': 'line',
         'source': 'geojsonSource',
+        'filter': ['==', 'type', 'actionpoint-curve'],
         'layout': {
-          'text-field': "Hello",
-          "text-font": ["Open Sans Regular", "Arial Unicode MS Regular"],
-          "text-size": 12
+            'line-join': 'round',
+            'line-cap': 'round'
         },
         'paint': {
-          'text-color': '#000000'
+            'line-color': '#D63F24',
+            'line-width': 0.64,
+            'line-dasharray':[0,2.2,10,2,10]
+        }
+    });
+
+    // ACTIONPOINT LINE STRING TEXT
+    map.addLayer({
+        "id": "actionpoint-line-text",
+        "type": "symbol",
+        "source": "geojsonSource",
+        "layout": {
+          "symbol-placement": "line",
+          "text-field": '{routeActionPointRequiredActionDescription}',
+          "text-size": 10,
+          "text-offset": [0, 2],
+          "text-anchor": "bottom-left"
         },
-        'filter': ['==', '$type', 'Point'],
-      });*/
-    
+        "paint": { 
+            "text-color": "#AA44A8",
+            "text-opacity": 0.5
+        }
+
+      });
 
 });

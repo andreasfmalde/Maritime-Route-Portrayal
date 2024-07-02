@@ -51,24 +51,27 @@ export async function S421ToGeoJSON(filename) {
             .forEach(point => {
                 let linkedTo = point.properties.linkedTo;
                 let linkedPoint = geoJSON.features.find(feature => feature.properties.waypoint === linkedTo && feature.properties.linkedTo === point.properties.waypoint);
+                const properties = {"type":"route-leg"};
                 if (linkedPoint != undefined) {
                     //console.log([point.geometry.coordinates, linkedPoint.geometry.coordinates])
                     let ID = `${point.properties.waypoint}-${linkedPoint.properties.waypoint}`;
                     let reversedID = `${linkedPoint.properties.waypoint}-${point.properties.waypoint}`;
                     if (!legs.includes(ID) && !legs.includes(reversedID)) {
-                        geoJSON.features.push(turf.lineString([point.geometry.coordinates, linkedPoint.geometry.coordinates]))
+                        geoJSON.features.push(turf.lineString([point.geometry.coordinates, linkedPoint.geometry.coordinates],properties))
                         legs.push(ID)
                     }
                 }
                 if (point.properties.linkedTo === waypoints[0].properties.id) {
-                    geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, point.geometry.coordinates]))
+                    geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, point.geometry.coordinates],properties))
                 } else if (point.properties.linkedTo === waypoints[waypoints.length - 1].properties.id) {
-                    geoJSON.features.push(turf.lineString([waypoints[waypoints.length - 1].geometry.coordinates, point.geometry.coordinates]))
+                    geoJSON.features.push(turf.lineString([waypoints[waypoints.length - 1].geometry.coordinates, point.geometry.coordinates],properties))
                 }
             });
 
         // Delete all the tangent points from the geoJSON feature collection
         geoJSON.features = geoJSON.features.filter(feature => !(feature.geometry.type === "Point" && feature.properties.type === "tangent"))
+        geoJSON.features.push(...waypoints);
+        geoJSON.features.push(...actionPoints);
 
 
         return geoJSON;
@@ -100,18 +103,47 @@ function S421RouteWaypointToGeoJSON(waypoint) {
 function S421RouteActionpointToGeoJSON(actionPoint){
     switch(Object.getOwnPropertyNames(actionPoint.geometry)[0]){
         case 'pointProperty':
-            console.log('Point action point');
-            break;
+            //console.log('Point action point');
+            //console.log(actionPoint);
+            const coordinates = getCoordinates(actionPoint.geometry.pointProperty.Point.pos._text);
+            if (coordinates[0] == NaN || coordinates[1] == NaN) {
+                return null;
+            }
+            return turf.point(coordinates, {
+                "type": "actionpoint",
+                "id": parseInt(actionPoint.routeActionPointID._text),
+                "routeActionPointTimeToAct": parseFloat(actionPoint.routeActionPointTimeToAct._text),
+                "routeActionPointRequiredActionDescription": actionPoint.routeActionPointRequiredActionDescription._text || "",
+                "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
+             });
         case 'curveProperty':
-            console.log('Curve action point'); 
-            break;
+            //console.log('Curve action point'); 
+            const positionList = [];
+            //console.log(actionPoint.geometry.curveProperty.Curve.segments.LineStringSegment.pos);
+
+            for (let p of actionPoint.geometry.curveProperty.Curve.segments.LineStringSegment.pos){
+                positionList.push(getCoordinates(p._text));
+            }
+            if (positionList.length < 2){
+                return null;
+            }
+            return turf.lineString(positionList, {
+                "type": "actionpoint-curve",
+                "id": parseInt(actionPoint.routeActionPointID._text),
+                "routeActionPointTimeToAct": parseFloat(actionPoint.routeActionPointTimeToAct._text),
+                "routeActionPointRequiredActionDescription": actionPoint.routeActionPointRequiredActionDescription._text || "",
+                "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
+            });
         case 'surfaceProperty':
-            console.log('Surface action point');
+            //console.log('Surface action point');
             break;
         default:
             console.log('Unknown action point');
+
+
+        return null;
     }
-    console.log(Object.getOwnPropertyNames(actionPoint.geometry));
+    //console.log(Object.getOwnPropertyNames(actionPoint.geometry));
 }
 
 
