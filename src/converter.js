@@ -179,6 +179,8 @@ function curveWaypointLeg(W1, W2, W3) {
 
     // Create the lineString for the circle arc
     const circleArc = turf.lineArc(circleCenter, W2.properties.radius, b1, b2, { steps: 100 });
+
+    circleArc.properties = {"type":"route-leg"};
     return [
         circleArc,
         tangent1,
