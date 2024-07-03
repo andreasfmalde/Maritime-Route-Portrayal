@@ -2,7 +2,6 @@ import { S421toJSON } from "./XMLparser.js";
 import * as turf from '@turf/turf';
 import { getCoordinates, writeJSONFile } from "./utility.js";
 
-
 export async function S421ToGeoJSON(filename) {
     try {
 
@@ -136,7 +135,25 @@ function S421RouteActionpointToGeoJSON(actionPoint){
             });
         case 'surfaceProperty':
             //console.log('Surface action point');
-            break;
+            const coords = actionPoint.geometry.surfaceProperty.Surface.patches.PolygonPatch.exterior.LinearRing.posList._text.split(' ');
+            let coordPairs = [];
+            for(let i = 0; i < coords.length-1; i+=2){
+                try{
+                    coordPairs.push([parseFloat(coords[i+1]),parseFloat(coords[i])]);
+                }catch(e){
+                    console.log(`Error: ${e}`);
+                    return null;
+                }
+            }
+
+
+            return turf.polygon([coordPairs], {
+                "type": "actionpoint-surface",
+                "id": parseInt(actionPoint.routeActionPointID._text),
+                "routeActionPointTimeToAct": parseFloat(actionPoint.routeActionPointTimeToAct._text),
+                "routeActionPointRequiredActionDescription": actionPoint.routeActionPointRequiredActionDescription._text || "",
+                "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
+            });
         default:
             console.log('Unknown action point');
 
