@@ -8,10 +8,18 @@ export async function S421ToGeoJSON(filename) {
         const route = await S421toJSON(filename);
         const geoJSON = turf.featureCollection([]);
 
-        // Convert waypoints to GeoJSON
+        const waypointLegs = {};
         const waypoints = [];
         const actionPoints = [];
 
+        // Save the RouteWayPointLegs for later use 
+        for(let obj of route.Dataset.member){
+            if('RouteWaypointLeg' in obj){
+                waypointLegs[obj.RouteWaypointLeg._attributes.id] = obj.RouteWaypointLeg;
+            }
+        }
+
+        // Loop through waypoints and action points
         for (let obj of route.Dataset.member) {
             if ('RouteWaypoint' in obj) {
                 const WP = S421RouteWaypointToGeoJSON(obj.RouteWaypoint)
@@ -28,7 +36,11 @@ export async function S421ToGeoJSON(filename) {
         }
 
         if (waypoints.length === 2){
-            geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, waypoints[1].geometry.coordinates]));
+            geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, waypoints[1].geometry.coordinates],{
+                "type":"route-leg",
+                "routeWaypointLeg": waypoints[0]?.properties.routeWaypointLeg ||
+                waypoints[1]?.properties.routeWaypointLeg || "",
+            }));
             return geoJSON;
         }
 
@@ -50,25 +62,35 @@ export async function S421ToGeoJSON(filename) {
             .forEach(point => {
                 let linkedTo = point.properties.linkedTo;
                 let linkedPoint = geoJSON.features.find(feature => feature.properties.waypoint === linkedTo && feature.properties.linkedTo === point.properties.waypoint);
-                const properties = {"type":"route-leg"};
+                const properties = {"type":"route-leg", "curve": false};
                 if (linkedPoint != undefined) {
                     //console.log([point.geometry.coordinates, linkedPoint.geometry.coordinates])
                     let ID = `${point.properties.waypoint}-${linkedPoint.properties.waypoint}`;
                     let reversedID = `${linkedPoint.properties.waypoint}-${point.properties.waypoint}`;
                     if (!legs.includes(ID) && !legs.includes(reversedID)) {
+                        properties["routeWaypointLeg"] = point.properties.routeWaypointLeg;
                         geoJSON.features.push(turf.lineString([point.geometry.coordinates, linkedPoint.geometry.coordinates],properties))
                         legs.push(ID)
                     }
                 }
                 if (point.properties.linkedTo === waypoints[0].properties.id) {
+                    properties["routeWaypointLeg"] = point.properties.routeWaypointLeg;
                     geoJSON.features.push(turf.lineString([waypoints[0].geometry.coordinates, point.geometry.coordinates],properties))
                 } else if (point.properties.linkedTo === waypoints[waypoints.length - 1].properties.id) {
-                    geoJSON.features.push(turf.lineString([waypoints[waypoints.length - 1].geometry.coordinates, point.geometry.coordinates],properties))
+                    properties["routeWaypointLeg"] = point.properties.routeWaypointLeg;
+                    geoJSON.features.push(turf.lineString([point.geometry.coordinates, waypoints[waypoints.length - 1].geometry.coordinates],properties))
                 }
             });
 
         // Delete all the tangent points from the geoJSON feature collection
         geoJSON.features = geoJSON.features.filter(feature => !(feature.geometry.type === "Point" && feature.properties.type === "tangent"))
+
+
+        const finalLegs = combineLegs(structuredClone(geoJSON));
+
+        geoJSON.features = geoJSON.features.filter(f => f.properties.type !== 'route-leg');
+
+        geoJSON.features.push(...finalLegs);
         geoJSON.features.push(...waypoints);
         geoJSON.features.push(...actionPoints);
 
@@ -82,6 +104,50 @@ export async function S421ToGeoJSON(filename) {
     }
 }
 
+function combineLegs(geojson){
+    const newLines = [];
+    const lines = [];
+    const curves = [];
+
+    geojson.features.forEach(element => {
+        if (element.properties.type === 'route-leg' && element.properties.curve){
+            curves.push(element);
+        }else if(element.properties.type === 'route-leg' && !element.properties.curve){
+            lines.push(element);
+        }
+    });
+
+
+    for (let line of lines){
+        let curve = curves.find(e => e.properties.routeWaypointLeg === line.properties.routeWaypointLeg);
+        let coordinates = line.geometry.coordinates;
+        if(curve){
+            let curveCoordinates = curve?.geometry.coordinates;
+            let distance1 = turf.distance(turf.point(coordinates[1]),turf.point(curveCoordinates[0]));
+            let distance2 = turf.distance(turf.point(coordinates[1]),turf.point(curveCoordinates[curveCoordinates.length-1]));
+
+            if(distance2 < distance1){
+                curve.geometry.coordinates.reverse();
+            }
+
+            coordinates.splice(coordinates.length-1,1);
+            coordinates.push(...curve.geometry.coordinates);
+            curves.splice(curves.indexOf(curve),1);
+        }
+        let newLine = turf.lineString(coordinates,
+            {
+                "type":"route-leg",
+                "routeWaypointLeg":line.properties.routeWaypointLeg
+            }
+        );
+        newLines.push(newLine);
+    }
+
+    return newLines;
+
+}
+
+
 // TODO: Some waypoints do not have coordinates, need to handle this
 function S421RouteWaypointToGeoJSON(waypoint) {
     if (Object.keys(waypoint.geometry).length > 0) {
@@ -92,7 +158,8 @@ function S421RouteWaypointToGeoJSON(waypoint) {
         return turf.point(coordinates, {
             type: "waypoint",
             id: parseInt(waypoint.routeWaypointID._text),
-            radius: parseFloat(waypoint.routeWaypointTurnRadius._text)
+            radius: parseFloat(waypoint.routeWaypointTurnRadius._text),
+            routeWaypointLeg: waypoint.routeWaypointLeg?._attributes.href.split('#')[1] || ""
         });
     }
     return null;
@@ -102,8 +169,6 @@ function S421RouteWaypointToGeoJSON(waypoint) {
 function S421RouteActionpointToGeoJSON(actionPoint){
     switch(Object.getOwnPropertyNames(actionPoint.geometry)[0]){
         case 'pointProperty':
-            //console.log('Point action point');
-            //console.log(actionPoint);
             const coordinates = getCoordinates(actionPoint.geometry.pointProperty.Point.pos._text);
             if (coordinates[0] == NaN || coordinates[1] == NaN) {
                 return null;
@@ -116,9 +181,7 @@ function S421RouteActionpointToGeoJSON(actionPoint){
                 "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
              });
         case 'curveProperty':
-            //console.log('Curve action point'); 
             const positionList = [];
-            //console.log(actionPoint.geometry.curveProperty.Curve.segments.LineStringSegment.pos);
 
             for (let p of actionPoint.geometry.curveProperty.Curve.segments.LineStringSegment.pos){
                 positionList.push(getCoordinates(p._text));
@@ -134,7 +197,6 @@ function S421RouteActionpointToGeoJSON(actionPoint){
                 "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
             });
         case 'surfaceProperty':
-            //console.log('Surface action point');
             const coords = actionPoint.geometry.surfaceProperty.Surface.patches.PolygonPatch.exterior.LinearRing.posList._text.split(' ');
             let coordPairs = [];
             for(let i = 0; i < coords.length-1; i+=2){
@@ -160,15 +222,26 @@ function S421RouteActionpointToGeoJSON(actionPoint){
 
         return null;
     }
-    //console.log(Object.getOwnPropertyNames(actionPoint.geometry));
 }
 
 
 function curveWaypointLeg(W1, W2, W3) {
     // No curve is needed if the turn radius is 0 or less
     if (W2.properties.radius <= 0.0) {
-        const t1 = turf.point(W2.geometry.coordinates, { "type": "tangent", "waypoint": W2.properties.id, "number": 1, "linkedTo": W1.properties.id });
-        const t2 = turf.point(W2.geometry.coordinates, { "type": "tangent", "waypoint": W2.properties.id, "number": 2, "linkedTo": W3.properties.id });
+        const t1 = turf.point(W2.geometry.coordinates, {
+            "type": "tangent",
+            "waypoint": W2.properties.id,
+            "number": 1,
+            "linkedTo": W1.properties.id,
+            "routeWaypointLeg": W2?.properties.routeWaypointLeg || ""
+        });
+        const t2 = turf.point(W2.geometry.coordinates, {
+            "type": "tangent",
+            "waypoint": W2.properties.id,
+            "number": 2,
+            "linkedTo": W3.properties.id,
+            "routeWaypointLeg": W3?.properties.routeWaypointLeg || ""
+        });
         return [null, t1, t2];
     }
     // Create imaginary lines between the waypoints
@@ -191,13 +264,28 @@ function curveWaypointLeg(W1, W2, W3) {
     const [b1, b2] = determineBearingOrder(cBearing1, cBearing2);
 
     // Specify the tangent points, making it easier to delete them later
-    tangent1.properties = { "type": "tangent", "waypoint": W2.properties.id, "number": 1, "linkedTo": W1.properties.id };
-    tangent2.properties = { "type": "tangent", "waypoint": W2.properties.id, "number": 2, "linkedTo": W3.properties.id };
+    tangent1.properties = {
+        "type": "tangent",
+        "waypoint": W2.properties.id,
+        "number": 1,
+        "linkedTo": W1.properties.id,
+        "routeWaypointLeg":W2?.properties.routeWaypointLeg || ""
+    };
+    tangent2.properties = {
+        "type": "tangent",
+        "waypoint": W2.properties.id,
+        "number": 2,
+        "linkedTo": W3.properties.id,
+        "routeWaypointLeg":W3?.properties.routeWaypointLeg || ""
+    };
 
     // Create the lineString for the circle arc
     const circleArc = turf.lineArc(circleCenter, W2.properties.radius, b1, b2, { steps: 100 });
 
-    circleArc.properties = {"type":"route-leg"};
+    circleArc.properties = {
+        "type":"route-leg",
+        "routeWaypointLeg":W2?.properties.routeWaypointLeg || "",
+        "curve": true};
     return [
         circleArc,
         tangent1,
@@ -314,7 +402,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
+        const json = await S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
         if(json == null){
             throw new Error('Conversion failed');
         }
