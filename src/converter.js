@@ -1,7 +1,7 @@
 import { S421toJSON } from "./XMLparser.js";
 import * as turf from '@turf/turf';
 import { getCoordinates, writeJSONFile } from "./utility.js";
-import { RouteWaypoint } from "./models/RouteWaypoint.js";
+import { RouteWaypoint, RouteWaypointLeg } from "./models/index.js";
 
 export async function S421ToGeoJSON(filename) {
     try {
@@ -16,7 +16,8 @@ export async function S421ToGeoJSON(filename) {
         // Save the RouteWayPointLegs for later use 
         for(let obj of route.Dataset.member){
             if('RouteWaypointLeg' in obj){
-                waypointLegs[obj.RouteWaypointLeg._attributes.id] = obj.RouteWaypointLeg;
+                let leg = new RouteWaypointLeg(obj.RouteWaypointLeg);
+                waypointLegs[leg.getId()] = leg;
             }
         }
 
@@ -37,12 +38,21 @@ export async function S421ToGeoJSON(filename) {
         }
 
         if (waypoints.length === 2){
-            geoJSON.features.push(turf.lineString([waypoints[0].getCoordinates(), waypoints[1].getCoordinates()],{
-                "type":"route-leg",
-                "routeWaypointLeg": waypoints[0]?.getRouteWaypointLeg() ||
-                waypoints[1]?.getRouteWaypointLeg() || "",
-            }));
+            let leg;
+            if(Object.keys(waypointLegs).length === 1){
+                leg = waypointLegs[Object.keys(waypointLegs)[0]];
+            }else{
+                leg = new RouteWaypointLeg(null);
+            }
+
+            leg.setCoordinates([waypoints[0].getCoordinates(), waypoints[1].getCoordinates()])
+            geoJSON.features.push(leg.toGeoJSON());
+
+            // TODO: Should append actionpoints and waypoints to the geoJSON object before returning
+
             return geoJSON;
+
+
         }
 
         for (let i = 1; i < waypoints.length - 1; i++) {
@@ -403,7 +413,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
+        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
         if(json == null){
             throw new Error('Conversion failed');
         }
