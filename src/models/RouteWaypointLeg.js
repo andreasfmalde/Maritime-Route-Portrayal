@@ -2,7 +2,7 @@ import * as turf from '@turf/turf';
 
 export class RouteWaypointLeg{
     constructor(object){
-        this.id = object?._attributes.id || 'RTE.WPT.LEG.0';
+        this.id = object._attributes.id;
         this.legCoordinates = [[],[]];
         this.routeWaypointLegStarboardXTDL = parseInt(object?.routeWaypointLegStarboardXTDL?._text) || 0;
         this.routeWaypointLegPortXTDL = parseInt(object?.routeWaypointLegPortXTDL?._text) || 0;
@@ -32,10 +32,10 @@ export class RouteWaypointLeg{
 
         if(object?.routeWaypointLegExtensions instanceof Object){
             this.routeWaypointLegExtensions = {
-                manufacturerId: object?.routeWaypointLegExtensions?._attributes.routeExtensionsManufacturerId || '',
-                routeExtensionsName: object?.routeWaypointLegExtensions?._attributes.routeExtensionsName || '',
-                version: parseInt(object?.routeWaypointLegExtensions?._attributes.routeExtensionsVersion) || 0,
-                note: object?.routeWaypointLegExtensions?.routeExtensionsNote._text || ''
+                manufacturerId: object?.routeWaypointLegExtensions?._attributes?.routeExtensionsManufacturerId || '',
+                routeExtensionsName: object?.routeWaypointLegExtensions?._attributes?.routeExtensionsName || '',
+                version: parseInt(object?.routeWaypointLegExtensions?._attributes?.routeExtensionsVersion) || 0,
+                note: object?.routeWaypointLegExtensions?.routeExtensionsNote?._text || ''
             }
         }
     }
@@ -45,16 +45,25 @@ export class RouteWaypointLeg{
         return this.id;
     }
 
-    setCoordinates(coordinates){
-        this.legCoordinates = coordinates;
-    }
-
     getCoordinates(){
         return this.legCoordinates;
     }
 
 
+    setCoordinates(coordinates){
+        this.legCoordinates = coordinates;
+    }
 
+    appendLegLineCoordinates(coordinates){
+        let distance1 = turf.distance(turf.point(coordinates[1]),turf.point(this.legCoordinates[0]));
+        let distance2 = turf.distance(turf.point(coordinates[1]),turf.point(this.legCoordinates[this.legCoordinates.length-1]));
+
+        if(distance2 < distance1){
+            this.legCoordinates.reverse();
+        }
+        coordinates.splice(coordinates.length-1,1);
+        this.legCoordinates.unshift(...coordinates);
+    }
 
     toGeoJSON(){
         return turf.lineString(this.legCoordinates, {
