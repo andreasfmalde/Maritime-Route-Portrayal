@@ -1,7 +1,10 @@
 import { S421toJSON } from "./XMLparser.js";
 import * as turf from '@turf/turf';
 import { getCoordinates, writeJSONFile } from "./utility.js";
-import { RouteWaypoint, RouteWaypointLeg } from "./models/index.js";
+import { 
+    RouteWaypoint, RouteWaypointLeg, PointActionPoint, 
+    CurveActionPoint, SurfaceActionPoint 
+} from "./models/index.js";
 
 export async function S421ToGeoJSON(filename) {
     try {
@@ -56,6 +59,7 @@ export async function S421ToGeoJSON(filename) {
             // TODO: Should append actionpoints and waypoints to the geoJSON object before returning
 
             waypoints.forEach(wp => geoJSON.features.push(wp.toGeoJSON()));
+            geoJSON.features.push(...actionPoints);
             return geoJSON;
 
 
@@ -71,10 +75,7 @@ export async function S421ToGeoJSON(filename) {
             tangentPoints.push(tanget1, tangent2);
         }
 
-        // Filter out the tangents and add leg lines between the curves
-        //const legs = [];
-
-
+        // Create leg lines between tangent points and add them to corresponding waypointLegs
         for(let point of tangentPoints){
             if(point.properties.used){
                 continue;
@@ -97,8 +98,6 @@ export async function S421ToGeoJSON(filename) {
                 .setCoordinates([point.geometry.coordinates, waypoints[waypoints.length-1].getCoordinates()]);
                 point.properties.used = true;
             }
-
-
         }
 
         Object.values(waypointLegs).forEach(leg => {
@@ -141,53 +140,11 @@ function S421RouteWaypointToGeoJSON(waypoint) {
 function S421RouteActionpointToGeoJSON(actionPoint){
     switch(Object.getOwnPropertyNames(actionPoint.geometry)[0]){
         case 'pointProperty':
-            const coordinates = getCoordinates(actionPoint.geometry.pointProperty.Point.pos._text);
-            if (coordinates[0] == NaN || coordinates[1] == NaN) {
-                return null;
-            }
-            return turf.point(coordinates, {
-                "type": "actionpoint",
-                "id": parseInt(actionPoint.routeActionPointID._text),
-                "routeActionPointTimeToAct": parseFloat(actionPoint.routeActionPointTimeToAct._text),
-                "routeActionPointRequiredActionDescription": actionPoint.routeActionPointRequiredActionDescription._text || "",
-                "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
-             });
+            return new PointActionPoint(actionPoint).toGeoJSON();
         case 'curveProperty':
-            const positionList = [];
-
-            for (let p of actionPoint.geometry.curveProperty.Curve.segments.LineStringSegment.pos){
-                positionList.push(getCoordinates(p._text));
-            }
-            if (positionList.length < 2){
-                return null;
-            }
-            return turf.lineString(positionList, {
-                "type": "actionpoint-curve",
-                "id": parseInt(actionPoint.routeActionPointID._text),
-                "routeActionPointTimeToAct": parseFloat(actionPoint.routeActionPointTimeToAct._text),
-                "routeActionPointRequiredActionDescription": actionPoint.routeActionPointRequiredActionDescription._text || "",
-                "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
-            });
+            return new CurveActionPoint(actionPoint).toGeoJSON();
         case 'surfaceProperty':
-            const coords = actionPoint.geometry.surfaceProperty.Surface.patches.PolygonPatch.exterior.LinearRing.posList._text.split(' ');
-            let coordPairs = [];
-            for(let i = 0; i < coords.length-1; i+=2){
-                try{
-                    coordPairs.push([parseFloat(coords[i+1]),parseFloat(coords[i])]);
-                }catch(e){
-                    console.log(`Error: ${e}`);
-                    return null;
-                }
-            }
-
-
-            return turf.polygon([coordPairs], {
-                "type": "actionpoint-surface",
-                "id": parseInt(actionPoint.routeActionPointID._text),
-                "routeActionPointTimeToAct": parseFloat(actionPoint.routeActionPointTimeToAct._text),
-                "routeActionPointRequiredActionDescription": actionPoint.routeActionPointRequiredActionDescription._text || "",
-                "routeActionPointRadius": parseFloat(actionPoint.routeActionPointRadius._text) 
-            });
+            return new SurfaceActionPoint(actionPoint).toGeoJSON();
         default:
             console.log('Unknown action point');
 
@@ -201,17 +158,13 @@ function curveWaypointLeg(W1, W2, W3) {
     // No curve is needed if the turn radius is 0 or less
     if (W2.getRadius() <= 0.0) {
         const t1 = turf.point(W2.getCoordinates(), {
-            "type": "tangent",
             "waypoint": W2.getId(),
-            "number": 1,
             "linkedTo": W1.getId(),
             "routeWaypointLeg": W2?.getRouteWaypointLeg() || "",
             "used":false
         });
         const t2 = turf.point(W2.getCoordinates(), {
-            "type": "tangent",
             "waypoint": W2.getId(),
-            "number": 2,
             "linkedTo": W3.getId(),
             "routeWaypointLeg": W3?.getRouteWaypointLeg() || "",
             "used":false
@@ -239,17 +192,13 @@ function curveWaypointLeg(W1, W2, W3) {
 
     // Specify the tangent points, making it easier to delete them later
     tangent1.properties = {
-        "type": "tangent",
         "waypoint": W2.getId(),
-        "number": 1,
         "linkedTo": W1.getId(),
         "routeWaypointLeg":W2?.getRouteWaypointLeg() || "",
         "used": false
     };
     tangent2.properties = {
-        "type": "tangent",
         "waypoint": W2.getId(),
-        "number": 2,
         "linkedTo": W3.getId(),
         "routeWaypointLeg":W3?.getRouteWaypointLeg() || "",
         "used": false
@@ -260,8 +209,8 @@ function curveWaypointLeg(W1, W2, W3) {
 
     circleArc.properties = {
         "type":"route-leg",
-        "routeWaypointLeg":W2?.getRouteWaypointLeg() || "",
-        "curve": true};
+        "routeWaypointLeg":W2?.getRouteWaypointLeg() || ""
+    };
     return [
         circleArc,
         tangent1,
@@ -378,7 +327,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-MIN.s421');
+        const json = await S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
         if(json == null){
             throw new Error('Conversion failed');
         }
