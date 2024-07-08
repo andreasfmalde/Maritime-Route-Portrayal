@@ -49,6 +49,22 @@ export class RouteWaypointLeg{
         return this.legCoordinates;
     }
 
+    getStarboardXTDL(){
+        return this.routeWaypointLegStarboardXTDL;
+    }
+
+    getPortXTDL(){
+        return this.routeWaypointLegPortXTDL;
+    }
+
+    getStarboardCL(){
+        return this.routeWaypointLegStarboardCL;
+    }
+
+    getPortCL(){
+        return this.routeWaypointLegPortCL;
+    }
+
 
     setCoordinates(coordinates){
         this.legCoordinates = coordinates;
@@ -94,6 +110,48 @@ export class RouteWaypointLeg{
             routeWaypointLegIssue: this.routeWaypointLegIssue,
             routeWaypointLegExtensions: this.routeWaypointLegExtensions
         });
+    }
+
+
+    starboardXTDLtoGeoJSON(){
+        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), this.routeWaypointLegStarboardXTDL, {units: 'meters'});
+        offset.properties ={
+            type: "route-leg-XTDL",
+            routeLegID: this.id,
+            side: "starboard"
+        }
+        return offset;
+    }
+
+    portXTDLtoGeoJSON(){
+        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), -this.routeWaypointLegPortXTDL, {units: 'meters'});
+        offset.properties ={
+            type: "route-leg-XTDL",
+            routeLegID: this.id,
+            side: "port"
+        }
+        return offset;
+    }
+
+
+    starboardCLtoGeoJSON(){
+        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), this.routeWaypointLegStarboardCL, {units: 'meters'});
+        offset.properties ={
+            type: "route-leg-CL",
+            routeLegID: this.id,
+            side: "starboard"
+        }
+        return offset;
+    }
+
+    portCLtoGeoJSON(){
+        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), -this.routeWaypointLegPortCL, {units: 'meters'});
+        offset.properties ={
+            type: "route-leg-CL",
+            routeLegID: this.id,
+            side: "port"
+        }
+        return offset;
     }
 
 }

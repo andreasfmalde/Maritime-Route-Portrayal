@@ -1,6 +1,6 @@
 import { S421toJSON } from "./XMLparser.js";
 import * as turf from '@turf/turf';
-import { getCoordinates, writeJSONFile } from "./utility.js";
+import { writeJSONFile } from "./utility.js";
 import { 
     RouteWaypoint, RouteWaypointLeg, PointActionPoint, 
     CurveActionPoint, SurfaceActionPoint 
@@ -12,13 +12,13 @@ export async function S421ToGeoJSON(filename) {
         const route = await S421toJSON(filename);
         const geoJSON = turf.featureCollection([]);
 
-        const waypointLegs = {};
-        const waypoints = [];
-        const actionPoints = [];
-        const tangentPoints = [];
+        const waypointLegs = {},
+        waypoints = [],
+        actionPoints = [],
+        tangentPoints = [];
 
-        // Save the RouteWayPointLegs for later use 
         for(let obj of route.Dataset.member){
+             // RouteWayPointLegs
             if('RouteWaypointLeg' in obj){
                 let leg = new RouteWaypointLeg(obj.RouteWaypointLeg);
                 waypointLegs[leg.getId()] = leg;
@@ -26,19 +26,15 @@ export async function S421ToGeoJSON(filename) {
                 let leg = new RouteWaypointLeg(obj.routeWaypointLeg);
                 waypointLegs[leg.getId()] = leg;
             }
-        }
-
-        // Loop through waypoints and action points
-        for (let obj of route.Dataset.member) {
+            // RouteWaypoints
             if ('RouteWaypoint' in obj) {
-
                 try{
                     waypoints.push(new RouteWaypoint(obj.RouteWaypoint));
                 }catch(e){
                     console.log(`INFO: Skipping waypoint due to: ${e}`);
-
                 }
             }
+            // RouteActionPoints
             if ('RouteActionPoint' in obj) {
                 const AP = S421RouteActionpointToGeoJSON(obj.RouteActionPoint);
                 if (AP != null) {
@@ -46,6 +42,7 @@ export async function S421ToGeoJSON(filename) {
                 }
             }
         }
+        // Handle special case when the route only contains two waypoints
         if (waypoints.length === 2){
             let leg;
             if(Object.keys(waypointLegs).length === 1){
@@ -54,19 +51,14 @@ export async function S421ToGeoJSON(filename) {
                 leg = new RouteWaypointLeg({_attributes:{id:waypoints[0].getRouteWaypointLeg()||
                     waypoints[1].getRouteWaypointLeg() || 'RTE.WPT.LEG.0'}});
             }
-
             leg.setCoordinates([waypoints[0].getCoordinates(), waypoints[1].getCoordinates()])
+            // Add features to feature collection
             geoJSON.features.push(leg.toGeoJSON());
-
-            // TODO: Should append actionpoints and waypoints to the geoJSON object before returning
-
             waypoints.forEach(wp => geoJSON.features.push(wp.toGeoJSON()));
             geoJSON.features.push(...actionPoints);
             return geoJSON;
-
-
         }
-
+        // Create waypointleg curves
         for (let i = 1; i < waypoints.length - 1; i++) {
             const [circleCenter, tanget1, tangent2] = curveWaypointLeg(waypoints[i - 1], waypoints[i], waypoints[i + 1]);
             if (circleCenter != null) {
@@ -77,7 +69,7 @@ export async function S421ToGeoJSON(filename) {
             tangentPoints.push(tanget1, tangent2);
         }
 
-        // Create leg lines between tangent points and add them to corresponding waypointLegs
+        // Create leg lines between curves and add them to corresponding waypointLegs
         for(let point of tangentPoints){
             if(point.properties.used){
                 continue;
@@ -102,20 +94,24 @@ export async function S421ToGeoJSON(filename) {
             }
         }
 
+        // Add features to feature collection
         Object.values(waypointLegs).forEach(leg => {
             if(leg.getCoordinates()[0].length > 0){
                 geoJSON.features.push(leg.toGeoJSON())
+                if(leg.getStarboardXTDL() !== 0){geoJSON.features.push(leg.starboardXTDLtoGeoJSON());}
+                if(leg.getPortXTDL() !== 0){geoJSON.features.push(leg.portXTDLtoGeoJSON());}
+                if(leg.getStarboardCL() !== 0){geoJSON.features.push(leg.starboardCLtoGeoJSON());}
+                if(leg.getPortCL() !== 0){geoJSON.features.push(leg.portCLtoGeoJSON());}
+                
             } 
         });
-
         waypoints.forEach(wp => geoJSON.features.push(wp.toGeoJSON()));
         geoJSON.features.push(...actionPoints);
-
+        
         return geoJSON;
 
-
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return null;
     }
 }
@@ -129,13 +125,10 @@ function S421RouteActionpointToGeoJSON(actionPoint){
         case 'surfaceProperty':
             return new SurfaceActionPoint(actionPoint).toGeoJSON();
         default:
-            console.log('Unknown action point');
-
-
+            console.log('Unknown action point type');
         return null;
     }
 }
-
 
 function curveWaypointLeg(W1, W2, W3) {
     // No curve is needed if the turn radius is 0 or less
@@ -191,7 +184,6 @@ function curveWaypointLeg(W1, W2, W3) {
     const circleArc = turf.lineArc(circleCenter, W2.getRadius(), b1, b2, { steps: 100 });
 
     circleArc.properties = {
-        "type":"route-leg",
         "routeWaypointLeg":W2?.getRouteWaypointLeg() || ""
     };
     return [
@@ -266,7 +258,6 @@ function calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2) {
 }
 
 function calculateMidLineBearing(bearing1, bearing2) {
-
     let b1 = convertTo360(bearing1) % 360;
     let b2 = convertTo360(bearing2) % 360;
 
@@ -276,7 +267,6 @@ function calculateMidLineBearing(bearing1, bearing2) {
         b1 = b2;
         b2 = temp;
     }
-
     const difference = b2 - b1;
 
     if (difference > 180) {
@@ -285,8 +275,6 @@ function calculateMidLineBearing(bearing1, bearing2) {
     } else {
         return convertToNorthBearing((b1 + difference / 2) % 360);
     }
-
-
 }
 
 function convertTo360(bearing) {
@@ -297,18 +285,17 @@ function convertTo360(bearing) {
 }
 
 function convertToNorthBearing(bearing) {
+    bearing = bearing % 360;
     if (bearing > 180) {
         bearing -= 360;
     }
     return bearing;
 }
 
-
-
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
+        const json = await S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
         if(json == null){
             throw new Error('Conversion failed');
         }
