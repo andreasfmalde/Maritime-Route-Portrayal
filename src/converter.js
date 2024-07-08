@@ -278,6 +278,9 @@ function calculateMidLineBearing(bearing1, bearing2) {
 }
 
 function convertTo360(bearing) {
+    if (bearing < -180 || bearing > 180) {
+        throw new Error('Bearing must be between -180 and 180 degrees');
+    }
     if (bearing < 0) {
         bearing += 360;
     }
@@ -308,3 +311,15 @@ async function main(){
 
 // Run the code
 main();
+
+
+
+// Only for testing
+export {
+    convertTo360 as convertTo360_TEST,
+    convertToNorthBearing as convertToNorthBearing_TEST,
+    calculateMidLineBearing as calculateMidLineBearing_TEST,
+    calculateCircleCenterCoordinates as calculateCircleCenterCoordinates_TEST,
+    determineBearingOrder as determineBearingOrder_TEST,
+    curveWaypointLeg as curveWaypointLeg_TEST,
+};
