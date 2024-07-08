@@ -31,9 +31,12 @@ export async function S421ToGeoJSON(filename) {
         // Loop through waypoints and action points
         for (let obj of route.Dataset.member) {
             if ('RouteWaypoint' in obj) {
-                const WP = S421RouteWaypointToGeoJSON(obj.RouteWaypoint)
-                if (WP != null) {
-                    waypoints.push(WP);
+
+                try{
+                    waypoints.push(new RouteWaypoint(obj.RouteWaypoint));
+                }catch(e){
+                    console.log(`INFO: Skipping waypoint due to: ${e}`);
+
                 }
             }
             if ('RouteActionPoint' in obj) {
@@ -43,7 +46,6 @@ export async function S421ToGeoJSON(filename) {
                 }
             }
         }
-
         if (waypoints.length === 2){
             let leg;
             if(Object.keys(waypointLegs).length === 1){
@@ -117,25 +119,6 @@ export async function S421ToGeoJSON(filename) {
         return null;
     }
 }
-
-
-// TODO: Some waypoints do not have coordinates, need to handle this
-function S421RouteWaypointToGeoJSON(waypoint) {
-    if (Object.keys(waypoint.geometry).length > 0) {
-        const coordinates = getCoordinates(waypoint.geometry.pointProperty.Point.pos._text);
-        if (coordinates[0] == NaN || coordinates[1] == NaN) {
-            return null;
-        }
-        return new RouteWaypoint(
-            parseInt(waypoint.routeWaypointID._text),
-            parseFloat(waypoint.routeWaypointTurnRadius._text),
-            waypoint.routeWaypointLeg?._attributes.href.split('#')[1] || "",
-            coordinates
-        );
-    }
-    return null;
-}
-
 
 function S421RouteActionpointToGeoJSON(actionPoint){
     switch(Object.getOwnPropertyNames(actionPoint.geometry)[0]){
@@ -247,14 +230,12 @@ function calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2) {
     let distance = 30; // Distance from W2 to circle center in km. Can be improved to be dynamic
     let previousDistance = distance * 2;
     let count = 0;
-
     while (true) {
         circleCenter = turf.destination(W2.toGeoJSON(), distance, midLineBearing);
         circle = turf.lineArc(circleCenter, W2.getRadius(), 0, 360, { steps: 100 });
         t1 = turf.lineIntersect(circle, line1);
         t2 = turf.lineIntersect(circle, line2);
         difference = Math.abs(previousDistance - distance);
-
         if (t1.features.length === 0 || t2.features.length === 0) {
             // Decrease the distance
             previousDistance = distance;
@@ -327,7 +308,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
+        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
         if(json == null){
             throw new Error('Conversion failed');
         }
