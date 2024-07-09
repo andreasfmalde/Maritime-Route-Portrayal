@@ -298,7 +298,7 @@ function convertToNorthBearing(bearing) {
 // Main entry point of application
 async function main(){
     try{
-        const json = await S421ToGeoJSON('SampleFiles/Cruise_Stavanger_Feistein_Out.s421');
+        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
         if(json == null){
             throw new Error('Conversion failed');
         }
@@ -310,7 +310,7 @@ async function main(){
 }
 
 
-//main();
+main();
 
 
 
