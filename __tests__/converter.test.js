@@ -1,7 +1,11 @@
+import { RouteWaypoint } from "../src/models";
+import { waypoints, curveWaypointLegResult } from "../data/test/testData";
 import {
     convertTo360_TEST, convertToNorthBearing_TEST,
-    calculateMidLineBearing_TEST
+    calculateMidLineBearing_TEST, determineBearingOrder_TEST,
+    curveWaypointLeg_TEST
 } from "../src/converter";
+
 
 
 describe('convertTo360 tests', ()=>{
@@ -106,6 +110,71 @@ describe('calculateMidLineBearing tests', ()=>{
         bearing2 = 95;
         expectedResult = 150;
         expect(calculateMidLineBearing_TEST(bearing1, bearing2)).toBe(expectedResult);
+    });
+
+});
+
+describe('determineBearingOrder tests', ()=>{
+    test('the smallest bearing is returned first when both bearings are between 0 and 180 degrees',()=>{
+        let bearing1 = 45;
+        let bearing2 = 135;
+        let expectedResult = [bearing1,bearing2];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+        bearing1 = 170;
+        bearing2 = 160.66;
+        expectedResult = [bearing2,bearing1];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+    });
+
+    test('the smallest bearing is returned first when both bearings are between -180 and 0 degrees',()=>{
+        let bearing1 = -170;
+        let bearing2 = -10;
+        let expectedResult = [bearing1,bearing2];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+        bearing1 = -5;
+        bearing2 = -15;
+        expectedResult = [bearing2,bearing1];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+    });
+
+    test('bearing between -90 and 0 should come before bearing between 0 and 90',()=>{
+        let bearing1 = -45;
+        let bearing2 = 20;
+        let expectedResult = [bearing1,bearing2];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+        bearing1 = 89;
+        bearing2 = -89;
+        expectedResult = [bearing2,bearing1];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+    });
+
+    test('bearing between 90 and 180 should come before bearing between -180 and -90',()=>{
+        let bearing1 = 135;
+        let bearing2 = -160;
+        let expectedResult = [bearing1,bearing2];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+        bearing1 = -90;
+        bearing2 = 179;
+        expectedResult = [bearing2,bearing1];
+        expect(determineBearingOrder_TEST(bearing1, bearing2)).toStrictEqual(expectedResult);
+
+    });
+
+});
+
+
+describe('curveWaypointLeg tests', ()=>{
+
+    test('valid lineString arc and tangentpoints are returned based on the middle point radius',()=>{
+        let WP1 = new RouteWaypoint(waypoints[0]);
+        let WP2 = new RouteWaypoint(waypoints[1]);
+        let WP3 = new RouteWaypoint(waypoints[2]);
+        
+        let result = curveWaypointLeg_TEST(WP1, WP2, WP3);
+
+        expect(result).not.toBeNull();
+        expect(result.length).toBe(3);
+        expect(result).toEqual(curveWaypointLegResult);
     });
 
 });
