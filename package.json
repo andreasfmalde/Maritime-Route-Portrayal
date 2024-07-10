@@ -1,0 +1,31 @@
+{
+  "name": "s421-routeexchange",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Client-side parsing and rendering of S-421 Route Exchange data.",
+  "main": "src/dist/converter.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@turf/turf": "^7.0.0",
+    "esm": "^3.2.25",
+    "maplibre-gl": "^4.4.1",
+    "xml-js": "^1.6.11",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@types/xml2js": "^0.4.14",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
