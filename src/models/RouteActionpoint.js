@@ -1,4 +1,4 @@
-import * as turf from '@turf/turf';
+import * as turf  from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
 import { getCoordinates } from "../utility.js";
 
 class RouteActionPoint{

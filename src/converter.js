@@ -1,15 +1,13 @@
-import { S421toJSON } from "./XMLparser.js";
-import * as turf from '@turf/turf';
-import { writeJSONFile } from "./utility.js";
+import * as turf from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+import { parseXML } from "./utility.js";
 import { 
     RouteWaypoint, RouteWaypointLeg, PointActionPoint, 
     CurveActionPoint, SurfaceActionPoint 
 } from "./models/index.js";
 
-export async function S421ToGeoJSON(filename) {
+export function S421ToGeoJSON(xml) {
     try {
-
-        const route = await S421toJSON(filename);
+        const route = parseXML(xml);
         const geoJSON = turf.featureCollection([]);
 
         const waypointLegs = {},
@@ -294,25 +292,6 @@ function convertToNorthBearing(bearing) {
     }
     return bearing;
 }
-
-// Main entry point of application
-async function main(){
-    try{
-        const json = await S421ToGeoJSON('SampleFiles/RTE-TEST-GFULL.s421.gml');
-        if(json == null){
-            throw new Error('Conversion failed');
-        }
-        writeJSONFile(json, './client/route.json');
-    }catch(e){
-        console.log(`Something went wrong... Error: ${e}`);
-    }
-    
-}
-
-
-main();
-
-
 
 // Only for testing
 export {

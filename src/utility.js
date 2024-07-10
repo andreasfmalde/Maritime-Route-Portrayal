@@ -1,4 +1,4 @@
-import fs from 'fs';
+import 'https://cdn.jsdelivr.net/npm/xml-js@1.6.11/dist/xml-js.min.js'; // For testing, change to: 'xml-js'
 
 
 export function nameSpaceTrimmer(str){
@@ -6,15 +6,11 @@ export function nameSpaceTrimmer(str){
 }
 
 export function recursiveNamespaceTrimmer(obj){
-    // Check if obj is an Object or Array
-
-    // Array
     if (Array.isArray(obj)) {
         for (let item of obj) {
             recursiveNamespaceTrimmer(item);
         }
     }
-    // Object
     else if (obj instanceof Object){
         let newName;
         for(let key of Object.getOwnPropertyNames(obj)) {
@@ -28,6 +24,15 @@ export function recursiveNamespaceTrimmer(obj){
     }
 }
 
+export function parseXML(xml){
+    console.log("working")
+    const object = JSON.parse(xml2json(xml, {compact: true, spaces: 4}));
+    if(!object){
+        return null;
+    }
+    recursiveNamespaceTrimmer(object);
+    return object;
+}
 
 export function getCoordinates(point){
     let coord = point.split(' ');
@@ -36,8 +41,4 @@ export function getCoordinates(point){
         coord = coord.filter(c => c !== '');
     }
     return coord.length === 2 ? [parseFloat(coord[1]), parseFloat(coord[0])]: [NaN, NaN];
-}
-
-export function writeJSONFile(content, filename){
-    fs.writeFileSync(filename, JSON.stringify(content, null, 2));
 }

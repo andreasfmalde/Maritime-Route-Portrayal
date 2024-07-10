@@ -19,14 +19,12 @@ export const TEXT_SIZE = 10;
 export const TEXT_OFFSET = [0, 2];
 export const TEXT_ANCHOR = 'bottom-left';
 
+
 export const TEXT_PAINT_DEFAULT = {
     'text-color': TEXT_COLOR_DEFAULT,
     'text-opacity': 0.5,
 }
-
-
 export const LINE_LAYOUT_DEFAULT = {
     'line-join': 'round',
     'line-cap': 'round'
 }
-
