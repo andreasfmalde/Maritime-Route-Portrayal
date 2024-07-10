@@ -1,5 +1,4 @@
-import { createLayers } from '../src/layers.js';
-import { S421ToGeoJSON } from '../src/converter.js';
+import { createLayers, S421ToGeoJSON } from '../src/s421convert.min.js';
 const style = {
     "version": 8,
     "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",

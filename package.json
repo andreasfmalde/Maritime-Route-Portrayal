@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Client-side parsing and rendering of S-421 Route Exchange data.",
-  "main": "src/converter.js",
+  "main": "src/dist/converter.js",
   "scripts": {
     "test": "jest"
   },

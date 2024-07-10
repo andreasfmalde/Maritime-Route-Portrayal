@@ -1,10 +1,10 @@
-import { RouteWaypoint } from "../src/models";
+import { RouteWaypoint } from "../src/dist/models";
 import { waypoints, curveWaypointLegResult } from "../data/test/testData";
 import {
     convertTo360_TEST, convertToNorthBearing_TEST,
     calculateMidLineBearing_TEST, determineBearingOrder_TEST,
     curveWaypointLeg_TEST
-} from "../src/converter";
+} from "../src/dist/converter";
 
 
 

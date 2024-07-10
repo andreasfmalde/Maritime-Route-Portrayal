@@ -1,5 +1,5 @@
 
-import {nameSpaceTrimmer, recursiveNamespaceTrimmer, getCoordinates} from '../src/utility';
+import {nameSpaceTrimmer, recursiveNamespaceTrimmer, getCoordinates} from '../src/dist/utility';
 
 describe('nameSpaceTrimmer tests', ()=>{
     test('colon and text before the colon is removed from the string',()=>{
