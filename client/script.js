@@ -43,13 +43,6 @@ try {
 
 
 map.on('load', async () => {
-    const image = await map.loadImage('assets/1x/RTEWPT01.png');
-    const image2 = await map.loadImage('assets/1x/RTEACTPOT01.png');
-
-
-    map.addImage('wpt-img', image.data);
-    map.addImage('act-img', image2.data);
-
 
     const form = document.querySelector('form');
     const fileInput = document.querySelector('input[type="file"]');

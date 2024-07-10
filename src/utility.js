@@ -25,7 +25,6 @@ export function recursiveNamespaceTrimmer(obj){
 }
 
 export function parseXML(xml){
-    console.log("working")
     const object = JSON.parse(xml2json(xml, {compact: true, spaces: 4}));
     if(!object){
         return null;

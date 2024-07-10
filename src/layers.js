@@ -30,24 +30,33 @@ export function createLayers(sourceName, layerIdPrefix = ""){
             'paint': constants.TEXT_PAINT_DEFAULT
         },
         {   // ROUTE WAYPOINT
-            'id': layerIdPrefix + 'waypoint-symbol',
-            'type': 'symbol',
+            'id': layerIdPrefix + 'waypoint-circle',
+            'type': 'circle',
             'source': sourceName,
             'filter': ['==', 'type', 'waypoint'],
-            'layout': {
-                'icon-image': 'wpt-img',
-                'icon-size': 0.4,
+            'paint':{
+                'circle-radius': 2,
+                'circle-color': 'transparent',
+                'circle-stroke-width': 2,
+                'circle-stroke-color': constants.LINE_COLOR_DEFAULT
             }
-    
         },
         {   // ACTIONPOINT - POINT
             'id': layerIdPrefix + 'actionpoint-point',
+            'type': 'circle',
+            'source': sourceName,
+            'filter': ['==', 'type', 'actionpoint-point'],
+            'paint':{
+                'circle-radius': 3,
+                'circle-color': constants.LINE_COLOR_DEFAULT,
+            }
+        },
+        {   // ACTIONPOINT - POINT TEXT
+            'id': layerIdPrefix + 'actionpoint-point-text',
             'type': 'symbol',
             'source': sourceName,
             'filter': ['==', 'type', 'actionpoint-point'],
             'layout': {
-                'icon-image': 'act-img',
-                'icon-size': 0.4,
                 'text-field': '{routeActionPointRequiredActionDescription}',
                 'text-size': constants.TEXT_SIZE,
                 'text-anchor': constants.TEXT_ANCHOR,
@@ -95,7 +104,7 @@ export function createLayers(sourceName, layerIdPrefix = ""){
                 'line-width': constants.LINE_WIDTH_DEFAULT
             }
         },
-        {
+        {   // XTDL - LINE
             'id': layerIdPrefix + 'route-leg-xtdl',
             'type': 'line',
             'source': sourceName,
@@ -106,7 +115,7 @@ export function createLayers(sourceName, layerIdPrefix = ""){
                 'line-width': constants.LINE_WIDTH_DEFAULT
             }
         },
-        {
+        {   // CL - LINE
             'id': layerIdPrefix + 'route-leg-cl',
             'type': 'line',
             'source': sourceName,
