@@ -8,6 +8,8 @@ export const LINE_COLOR_DEFAULT = '#D63F24';
 export const TEXT_COLOR_DEFAULT = '#AA44A8';
 export const XTDL_COLOR = '#11AA44'; 
 export const CL_COLOR = '#86279C'; 
+export const NAVIGATION_RED = '#EE0000';
+export const NAVIGATION_GREEN = '#008800';
 
 // DASHARRAYS
 export const ROUTE_LEG_DASHARRAY = [0,2.2,10,2,10];

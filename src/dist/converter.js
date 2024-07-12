@@ -91,21 +91,37 @@ export function S421ToGeoJSON(xml) {
                 point.properties.used = true;
             }
         }
-
+        const xtdlStarboard = [],
+        xtdlPort = [],
+        clStarboard = [],
+        clPort = [];
+        
         // Add features to feature collection
         Object.values(waypointLegs).forEach(leg => {
             if(leg.getCoordinates()[0].length > 0){
-                geoJSON.features.push(leg.toGeoJSON())
-                if(leg.getStarboardXTDL() !== 0){geoJSON.features.push(leg.starboardXTDLtoGeoJSON());}
-                if(leg.getPortXTDL() !== 0){geoJSON.features.push(leg.portXTDLtoGeoJSON());}
-                if(leg.getStarboardCL() !== 0){geoJSON.features.push(leg.starboardCLtoGeoJSON());}
-                if(leg.getPortCL() !== 0){geoJSON.features.push(leg.portCLtoGeoJSON());}
-                
+                geoJSON.features.push(leg.toGeoJSON());
+
+                if(leg.getStarboardXTDL() !== 0) xtdlStarboard.push(leg.starboardXTDLtoGeoJSON());
+                if(leg.getPortXTDL() !== 0) xtdlPort.push(leg.portXTDLtoGeoJSON());
+                if(leg.getStarboardCL() !== 0) clStarboard.push(leg.starboardCLtoGeoJSON());
+                if(leg.getPortCL() !== 0) clPort.push(leg.portCLtoGeoJSON());
+
+
+                if(xtdlStarboard.length > 1) updateLegCorridors(xtdlStarboard);
+                if(xtdlPort.length > 1) updateLegCorridors(xtdlPort);
+                if(clStarboard.length > 1) updateLegCorridors(clStarboard);
+                if(clPort.length > 1) updateLegCorridors(clPort);
+
+
             } 
         });
+
+        geoJSON.features.push(...xtdlStarboard);
+        geoJSON.features.push(...xtdlPort);
+        geoJSON.features.push(...clStarboard);
+        geoJSON.features.push(...clPort);
         waypoints.forEach(wp => geoJSON.features.push(wp.toGeoJSON()));
         geoJSON.features.push(...actionPoints);
-        
         return geoJSON;
 
     } catch (err) {
@@ -125,6 +141,17 @@ function S421RouteActionpointToGeoJSON(actionPoint){
         default:
             console.log('Unknown action point type');
         return null;
+    }
+}
+
+function updateLegCorridors(list){
+    let last = list[list.length-1];
+    let secondLast = list[list.length-2];
+    if(last.properties.distance === secondLast.properties.distance){
+        console.log(last.properties.routeLegID, last.properties.type)
+        last.geometry.coordinates[0] = secondLast.geometry.coordinates[secondLast.geometry.coordinates.length-1];
+    }else{
+        secondLast.geometry.coordinates.push(last.geometry.coordinates[0])
     }
 }
 
@@ -236,7 +263,7 @@ function calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2) {
             distance += difference * 0.5;
         }
         else if (t1.features.length > 1 || t2.features.length > 1) {
-            if (Math.abs(previousDistance - distance) < 1e-4) {
+            if (Math.abs(previousDistance - distance) < 1e-5) {
                 // Intersections are found that satisfy the conditions
                 break;
             }

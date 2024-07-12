@@ -80,7 +80,7 @@ export function createLayers(sourceName, layerIdPrefix = ""){
             'id': layerIdPrefix + 'actionpoint-line-text',
             'type': 'symbol',
             'source': sourceName,
-            'filter': ['==', 'type', 'actionpoint-curve'],
+            'filter': ['in', ['get','type'],['literal',['actionpoint-curve','actionpoint-surface']]],
             'layout': {
               'symbol-placement': 'line',
               'text-field': '{routeActionPointRequiredActionDescription}',
@@ -111,7 +111,7 @@ export function createLayers(sourceName, layerIdPrefix = ""){
             'filter': ['==', 'type', 'route-leg-XTDL'],
             'layout': constants.LINE_LAYOUT_DEFAULT,
             'paint': {
-                'line-color': constants.XTDL_COLOR,
+                'line-color': ['case',['==',['get','side'],'starboard'], constants.NAVIGATION_GREEN, constants.NAVIGATION_RED],
                 'line-width': constants.LINE_WIDTH_DEFAULT
             }
         },

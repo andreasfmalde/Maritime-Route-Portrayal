@@ -22,8 +22,8 @@ const style = {
 const map = new maplibregl.Map({
     container: 'map', 
     style: style, 
-    center: [20, 57.5],
-    zoom: 5
+    center: [5.542, 58.9304],
+    zoom: 17
 })
 
 let geojson;

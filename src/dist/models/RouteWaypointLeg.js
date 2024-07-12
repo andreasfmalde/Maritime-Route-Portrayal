@@ -1,4 +1,5 @@
 import * as turf from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+import {offsetLine} from '../utility.js';
 
 export class RouteWaypointLeg{
     constructor(object){
@@ -114,50 +115,46 @@ export class RouteWaypointLeg{
 
 
     starboardXTDLtoGeoJSON(){
-        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), this.routeWaypointLegStarboardXTDL, {units: 'meters'});
-        offset.geometry.coordinates.push(this.legCoordinates[this.legCoordinates.length-1])
-        offset.geometry.coordinates.unshift(this.legCoordinates[0])
+        const offset = offsetLine(this.toGeoJSON(),this.getStarboardXTDL());
         offset.properties ={
             type: "route-leg-XTDL",
             routeLegID: this.id,
-            side: "starboard"
+            side: "starboard",
+            distance: Math.abs(this.getStarboardXTDL())
         }
         return offset;
     }
 
     portXTDLtoGeoJSON(){
-        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), -this.routeWaypointLegPortXTDL, {units: 'meters'});
-        offset.geometry.coordinates.push(this.legCoordinates[this.legCoordinates.length-1])
-        offset.geometry.coordinates.unshift(this.legCoordinates[0])
+        const offset = offsetLine(this.toGeoJSON(),-this.getPortXTDL());
         offset.properties ={
             type: "route-leg-XTDL",
             routeLegID: this.id,
-            side: "port"
+            side: "port",
+            distance: Math.abs(this.getStarboardXTDL())
         }
         return offset;
     }
 
 
     starboardCLtoGeoJSON(){
-        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), this.routeWaypointLegStarboardCL, {units: 'meters'});
-        offset.geometry.coordinates.push(this.legCoordinates[this.legCoordinates.length-1])
-        offset.geometry.coordinates.unshift(this.legCoordinates[0])
+        const offset = offsetLine(this.toGeoJSON(),this.getStarboardCL());
         offset.properties ={
             type: "route-leg-CL",
             routeLegID: this.id,
-            side: "starboard"
+            side: "starboard",
+            distance: Math.abs(this.getStarboardXTDL())
         }
         return offset;
     }
 
     portCLtoGeoJSON(){
-        const offset = turf.lineOffset(turf.lineString(this.legCoordinates), -this.routeWaypointLegPortCL, {units: 'meters'});
-        offset.geometry.coordinates.push(this.legCoordinates[this.legCoordinates.length-1])
-        offset.geometry.coordinates.unshift(this.legCoordinates[0])
+        const offset = offsetLine(this.toGeoJSON(),-this.getPortCL());
         offset.properties ={
             type: "route-leg-CL",
             routeLegID: this.id,
-            side: "port"
+            side: "port",
+            distance: Math.abs(this.getStarboardXTDL())
         }
         return offset;
     }
