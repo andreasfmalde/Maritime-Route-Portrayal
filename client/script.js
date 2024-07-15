@@ -22,8 +22,8 @@ const style = {
 const map = new maplibregl.Map({
     container: 'map', 
     style: style, 
-    center: [5.542, 58.9304],
-    zoom: 17
+    center: [16, 56.7304],
+    zoom: 5
 })
 
 let geojson;
@@ -91,3 +91,10 @@ map.on('load', async () => {
         }
     }
 });
+
+
+map.on('mouseenter','route-leg-cl', (e)=>{
+    map.queryRenderedFeatures(e.point).forEach((feature)=>{
+        console.log(feature.properties.routeLegID, feature.properties.distance);
+    })
+})
