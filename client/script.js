@@ -93,8 +93,20 @@ map.on('load', async () => {
 });
 
 
-map.on('mouseenter','route-leg-cl', (e)=>{
-    map.queryRenderedFeatures(e.point).forEach((feature)=>{
-        console.log(feature.properties.routeLegID, feature.properties.distance);
-    })
-})
+const popup = new maplibregl.Popup({
+    closeButton: false,
+    closeOnClick: false
+});
+
+map.on('mouseenter', 'route-leg-xtdl',(e) => {
+    map.getCanvas().style.cursor = 'pointer';
+    const feature = e.features[0];
+    const id = feature.properties.routeLegID;
+    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: XTDL`;
+    popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+});
+
+map.on('mouseleave','route-leg-xtdl', () => {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
+});
