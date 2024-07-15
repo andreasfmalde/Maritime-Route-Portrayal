@@ -60,10 +60,9 @@ export function offsetLine(line, distance){
     }
     const offsetCoords = [offsetLines[0][0]]; 
     for (let i = 0; i < offsetLines.length; i++) { 
-        if (offsetLines[i + 1]) { 
-            const firstLine = transformScale(lineString(offsetLines[i]), 2); 
-            const secondLine = transformScale(lineString(offsetLines[i + 1]), 2); 
-          
+        if (offsetLines[i + 1]){
+            const firstLine = transformScale(lineString(offsetLines[i]), 25); 
+            const secondLine = transformScale(lineString(offsetLines[i + 1]), 25);
             const intersect = lineIntersect(firstLine, secondLine);
             if (intersect.features.length > 0) {
                 offsetCoords.push(intersect.features[0].geometry.coordinates);
@@ -71,6 +70,5 @@ export function offsetLine(line, distance){
 
         } else offsetCoords.push(offsetLines[i][1]); 
     }
-
     return lineString(offsetCoords);
 };

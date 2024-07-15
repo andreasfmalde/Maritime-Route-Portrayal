@@ -131,7 +131,7 @@ export class RouteWaypointLeg{
             type: "route-leg-XTDL",
             routeLegID: this.id,
             side: "port",
-            distance: Math.abs(this.getStarboardXTDL())
+            distance: Math.abs(this.getPortXTDL())
         }
         return offset;
     }
@@ -143,7 +143,7 @@ export class RouteWaypointLeg{
             type: "route-leg-CL",
             routeLegID: this.id,
             side: "starboard",
-            distance: Math.abs(this.getStarboardXTDL())
+            distance: Math.abs(this.getStarboardCL())
         }
         return offset;
     }
@@ -154,7 +154,7 @@ export class RouteWaypointLeg{
             type: "route-leg-CL",
             routeLegID: this.id,
             side: "port",
-            distance: Math.abs(this.getStarboardXTDL())
+            distance: Math.abs(this.getPortCL())
         }
         return offset;
     }

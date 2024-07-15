@@ -91,12 +91,12 @@ export function S421ToGeoJSON(xml) {
                 point.properties.used = true;
             }
         }
+
+        // Add features to feature collection
         const xtdlStarboard = [],
         xtdlPort = [],
         clStarboard = [],
         clPort = [];
-        
-        // Add features to feature collection
         Object.values(waypointLegs).forEach(leg => {
             if(leg.getCoordinates()[0].length > 0){
                 geoJSON.features.push(leg.toGeoJSON());
@@ -106,20 +106,14 @@ export function S421ToGeoJSON(xml) {
                 if(leg.getStarboardCL() !== 0) clStarboard.push(leg.starboardCLtoGeoJSON());
                 if(leg.getPortCL() !== 0) clPort.push(leg.portCLtoGeoJSON());
 
-
                 if(xtdlStarboard.length > 1) updateLegCorridors(xtdlStarboard);
                 if(xtdlPort.length > 1) updateLegCorridors(xtdlPort);
                 if(clStarboard.length > 1) updateLegCorridors(clStarboard);
                 if(clPort.length > 1) updateLegCorridors(clPort);
-
-
             } 
         });
+        geoJSON.features.push(...xtdlStarboard, ...xtdlPort, ...clStarboard, ...clPort);
 
-        geoJSON.features.push(...xtdlStarboard);
-        geoJSON.features.push(...xtdlPort);
-        geoJSON.features.push(...clStarboard);
-        geoJSON.features.push(...clPort);
         waypoints.forEach(wp => geoJSON.features.push(wp.toGeoJSON()));
         geoJSON.features.push(...actionPoints);
         return geoJSON;
@@ -147,11 +141,27 @@ function S421RouteActionpointToGeoJSON(actionPoint){
 function updateLegCorridors(list){
     let last = list[list.length-1];
     let secondLast = list[list.length-2];
-    if(last.properties.distance === secondLast.properties.distance){
-        console.log(last.properties.routeLegID, last.properties.type)
+    let length, index, number;;
+    const backCoordinate = turf.point(secondLast.geometry.coordinates[secondLast.geometry.coordinates.length-1]); 
+
+    if(last.properties.distance !== secondLast.properties.distance){
+        let secondLinePoint = turf.point(last.geometry.coordinates[1]);
+
+        if(turf.distance(turf.point(secondLast.geometry.coordinates[1]),secondLinePoint) <
+        turf.distance(backCoordinate,secondLinePoint)){
+            length = secondLast.geometry.coordinates.length;
+            number = length-2;
+            secondLast.geometry.coordinates.splice(2,number);
+        }
+        secondLast.geometry.coordinates.push(last.geometry.coordinates[0]);
+    }
+    else{
+        let closestPoint = turf.nearestPointOnLine(secondLast, last.geometry.coordinates[1]);
+        length = secondLast.geometry.coordinates.length;
+        index = closestPoint.properties.index;
+        number = length-index-1;
+        secondLast.geometry.coordinates.splice(index+1,number);
         last.geometry.coordinates[0] = secondLast.geometry.coordinates[secondLast.geometry.coordinates.length-1];
-    }else{
-        secondLast.geometry.coordinates.push(last.geometry.coordinates[0])
     }
 }
 
