@@ -1,4 +1,4 @@
-import * as turf  from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+import {point, lineString, polygon}  from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
 import { getCoordinates } from "../utility.js";
 
 class RouteActionPoint{
@@ -71,7 +71,7 @@ export class PointActionPoint extends RouteActionPoint{
     }
 
     toGeoJSON(){
-        return turf.point(this.coordinates, this.getProperties())
+        return point(this.coordinates, this.getProperties())
     }
 }
 
@@ -98,7 +98,7 @@ export class CurveActionPoint extends RouteActionPoint{
     }
 
     toGeoJSON(){
-        return turf.lineString(this.coordinates, this.getProperties())
+        return lineString(this.coordinates, this.getProperties())
     }
 
 }
@@ -130,7 +130,7 @@ export class SurfaceActionPoint extends RouteActionPoint{
     }
 
     toGeoJSON(){
-        return turf.polygon([this.coordinates], this.getProperties())
+        return polygon([this.coordinates], this.getProperties())
     }
 
 }

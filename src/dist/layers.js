@@ -3,6 +3,24 @@ import * as constants from './constants.js';
 
 export function createLayers(sourceName, layerIdPrefix = ""){
     return [
+        {
+            'id': layerIdPrefix + 'route-leg-corridor-cl',
+            'type': 'fill',
+            'source': sourceName,
+            'filter': ['==', 'type', 'route-leg-corridor-cl'],
+            'paint': {
+                'fill-color': constants.CL_CORRIDOR_COLOR
+            }
+        },
+        {
+            'id': layerIdPrefix + 'route-leg-corridor-xtdl',
+            'type': 'fill',
+            'source': sourceName,
+            'filter': ['==', 'type', 'route-leg-corridor-xtdl'],
+            'paint': {
+                'fill-color': constants.XTDL_CORRIDOR_COLOR
+            }
+        },
         {   // ROUTE LEG - LINE
             'id': layerIdPrefix + 'route-leg-line',
             'type': 'line',
@@ -80,7 +98,7 @@ export function createLayers(sourceName, layerIdPrefix = ""){
             'id': layerIdPrefix + 'actionpoint-line-text',
             'type': 'symbol',
             'source': sourceName,
-            'filter': ['==', 'type', 'actionpoint-curve'],
+            'filter': ['in', ['get','type'],['literal',['actionpoint-curve','actionpoint-surface']]],
             'layout': {
               'symbol-placement': 'line',
               'text-field': '{routeActionPointRequiredActionDescription}',
@@ -111,7 +129,7 @@ export function createLayers(sourceName, layerIdPrefix = ""){
             'filter': ['==', 'type', 'route-leg-XTDL'],
             'layout': constants.LINE_LAYOUT_DEFAULT,
             'paint': {
-                'line-color': constants.XTDL_COLOR,
+                'line-color': ['case',['==',['get','side'],'starboard'], constants.NAVIGATION_GREEN, constants.NAVIGATION_RED],
                 'line-width': constants.LINE_WIDTH_DEFAULT
             }
         },

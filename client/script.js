@@ -22,7 +22,7 @@ const style = {
 const map = new maplibregl.Map({
     container: 'map', 
     style: style, 
-    center: [20, 57.5],
+    center: [16, 56.7304],
     zoom: 5
 })
 
@@ -84,10 +84,60 @@ map.on('load', async () => {
             'type': 'geojson',
             'data': geojson
         });
-
         const layers = createLayers('geojsonSource');
         for (let layer of layers) {
             map.addLayer(layer);
         }
     }
+});
+
+
+const checkXTDL = document.querySelector('#chk-xtdl');
+const checkCL = document.querySelector('#chk-cl');
+
+checkXTDL.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        map.setLayoutProperty('route-leg-corridor-xtdl', 'visibility', 'visible');
+    } else {
+        map.setLayoutProperty('route-leg-corridor-xtdl', 'visibility', 'none');
+    }
+});
+checkCL.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        map.setLayoutProperty('route-leg-corridor-cl', 'visibility', 'visible');
+    } else {
+        map.setLayoutProperty('route-leg-corridor-cl', 'visibility', 'none');
+    }
+});
+
+
+const popup = new maplibregl.Popup({
+    closeButton: false,
+    closeOnClick: false
+});
+
+map.on('mouseenter', 'route-leg-xtdl',(e) => {
+    map.getCanvas().style.cursor = 'pointer';
+    const feature = e.features[0];
+    const id = feature.properties.routeLegID;
+    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: XTDL`;
+    popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+});
+
+map.on('mouseleave','route-leg-xtdl', () => {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
+});
+
+map.on('mouseenter', 'route-leg-cl',(e) => {
+    map.getCanvas().style.cursor = 'pointer';
+    const feature = e.features[0];
+    const id = feature.properties.routeLegID;
+    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: CL`;
+    popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+});
+
+map.on('mouseleave','route-leg-cl', () => {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
 });
