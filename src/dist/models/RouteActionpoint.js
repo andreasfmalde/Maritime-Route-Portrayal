@@ -5,11 +5,11 @@ class RouteActionPoint{
         routeActionPointExtensions){
         this.id = id;
         this.routeActionPointID = routeActionPointID;
-        this.routeActionPointName = routeActionPointName;
-        this.routeActionPointRadius = routeActionPointRadius;
-        this.routeActionPointTimeToAct = routeActionPointTimeToAct;
-        this.routeActionPointRequiredAction = routeActionPointRequiredAction;
-        this.routeActionPointRequiredActionDescription = routeActionPointRequiredActionDescription;
+        this.routeActionPointName = routeActionPointName || '';
+        this.routeActionPointRadius = routeActionPointRadius || 0.0;
+        this.routeActionPointTimeToAct = routeActionPointTimeToAct || 0.0;
+        this.routeActionPointRequiredAction = routeActionPointRequiredAction || 0;
+        this.routeActionPointRequiredActionDescription = routeActionPointRequiredActionDescription || '';
         this.routeActionPointExtensions = routeActionPointExtensions;
         this.coordinates = [];
         this.type = 'actionpoint';

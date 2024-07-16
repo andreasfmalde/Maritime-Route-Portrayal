@@ -7,13 +7,13 @@ export class RouteWaypoint{
         routeWaypointExtensions){
 
         this.id = id;
-        this.reference = reference;
+        this.reference = reference || '';
         this.coordinates = coordinates;
-        this.routeWaypointName = routeWaypointName;
-        this.routeWaypointFixed = routeWaypointFixed;
-        this.routeWaypointTurnRadius = routeWaypointTurnRadius;
-        this.routeWaypointLeg = routeWaypointLeg;
-        this.routeWaypointExternalReferenceID = routeWaypointExternalReferenceID;
+        this.routeWaypointName = routeWaypointName || '';
+        this.routeWaypointFixed = routeWaypointFixed || false;
+        this.routeWaypointTurnRadius = routeWaypointTurnRadius || 0.0;
+        this.routeWaypointLeg = routeWaypointLeg || '';
+        this.routeWaypointExternalReferenceID = routeWaypointExternalReferenceID || '';
         this.routeWaypointExtensions = routeWaypointExtensions;
         this.type = "waypoint";
 
