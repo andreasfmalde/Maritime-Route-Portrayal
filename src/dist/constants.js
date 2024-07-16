@@ -10,6 +10,8 @@ export const XTDL_COLOR = '#11AA44';
 export const CL_COLOR = '#86279C'; 
 export const NAVIGATION_RED = '#EE0000';
 export const NAVIGATION_GREEN = '#008800';
+export const XTDL_CORRIDOR_COLOR = 'rgba(160, 173, 163,0.9)';
+export const CL_CORRIDOR_COLOR = 'rgba(200, 100, 240,0.4)';
 
 // DASHARRAYS
 export const ROUTE_LEG_DASHARRAY = [0,2.2,10,2,10];
