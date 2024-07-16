@@ -96,7 +96,9 @@ export function S421ToGeoJSON(xml) {
         const xtdlStarboard = [],
         xtdlPort = [],
         clStarboard = [],
-        clPort = [];
+        clPort = [],
+        xtdlPolygons = [],
+        clPolygons = [];
         Object.values(waypointLegs).forEach(leg => {
             if(leg.getCoordinates()[0].length > 0){
                 geoJSON.features.push(leg.toGeoJSON());
@@ -110,10 +112,26 @@ export function S421ToGeoJSON(xml) {
                 if(xtdlPort.length > 1) updateLegCorridors(xtdlPort);
                 if(clStarboard.length > 1) updateLegCorridors(clStarboard);
                 if(clPort.length > 1) updateLegCorridors(clPort);
+
+                if(xtdlStarboard.length > 1 && xtdlPort.length > 1){
+                    xtdlPolygons.push(RouteWaypointLeg.createCorridorPolygons(xtdlStarboard[xtdlStarboard.length-2],xtdlPort[xtdlPort.length-2]));
+                }
+                if(clStarboard.length > 1 && clPort.length > 1){
+                    clPolygons.push(RouteWaypointLeg.createCorridorPolygons(clStarboard[clStarboard.length-2],clPort[clPort.length-2]));
+                }
             } 
         });
-        geoJSON.features.push(...xtdlStarboard, ...xtdlPort, ...clStarboard, ...clPort);
+        if(xtdlStarboard.length > 0){
+            xtdlPolygons.push(RouteWaypointLeg.createCorridorPolygons(xtdlStarboard[xtdlStarboard.length-1],xtdlPort[xtdlPort.length-1]));
+        }
+        if(clStarboard.length > 0){
+            clPolygons.push(RouteWaypointLeg.createCorridorPolygons(clStarboard[clStarboard.length-1],clPort[clPort.length-1]));
+        }
+        
+        
 
+
+        geoJSON.features.push(...xtdlStarboard, ...xtdlPort, ...clStarboard, ...clPort,...xtdlPolygons,...clPolygons);
         waypoints.forEach(wp => geoJSON.features.push(wp.toGeoJSON()));
         geoJSON.features.push(...actionPoints);
         return geoJSON;

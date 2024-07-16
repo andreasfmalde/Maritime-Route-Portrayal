@@ -159,4 +159,17 @@ export class RouteWaypointLeg{
         return offset;
     }
 
+
+    static createCorridorPolygons(starboardLine, portLine){
+        const coordinates = [];
+        let reverseArray = [...portLine.geometry.coordinates].reverse();
+        coordinates.push(...starboardLine.geometry.coordinates)
+        coordinates.push(starboardLine.geometry.coordinates[starboardLine.geometry.coordinates.length-1],reverseArray[0]);
+        coordinates.push(...reverseArray);
+        coordinates.push(reverseArray[reverseArray.length-1],starboardLine.geometry.coordinates[0]);
+
+        let type = starboardLine.properties.type === "route-leg-XTDL" ? "route-leg-corridor-xtdl" : "route-leg-corridor-cl";
+        return turf.polygon([coordinates],{type: type});
+    }
+
 }
