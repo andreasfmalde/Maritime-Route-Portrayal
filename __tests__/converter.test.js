@@ -4,7 +4,7 @@ import {
     convertTo360_TEST, convertToNorthBearing_TEST,
     calculateMidLineBearing_TEST, determineBearingOrder_TEST,
     curveWaypointLeg_TEST
-} from "../src/dist/converter";
+} from "../src/dist/S421/converter";
 
 
 

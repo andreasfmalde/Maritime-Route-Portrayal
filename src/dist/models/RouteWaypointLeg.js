@@ -4,43 +4,42 @@ import {
 } from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
 
 export class RouteWaypointLeg{
-    constructor(object){
-        this.id = object._attributes.id;
+    constructor(
+        id, routeWaypointLegStarboardXTDL, routeWaypointLegPortXTDL,
+        routeWaypointLegStarboardCL, routeWaypointLegPortCL, routeWaypointLegSafetyContour,
+        routeWaypointLegSafetyDepth, routeWaypointLegGeometryType, routeWaypointLegSOGMin,
+        routeWaypointLegSOGMax, routeWaypointLegSTWMin, routeWaypointLegSTWMax, routeWaypointLegDraft,
+        routeWaypointLegDraftForward, routeWaypointLegDraftAft, routeWaypointLegDraftMax, routeWaypointLegAirDraftMax,
+        routeWaypointLegBeamMax, routeWaypointLegLengthMax, routeWaypointLegStaticUKC, routeWaypointLegDynamicUKC,
+        routeWaypointLegSafetyMargin, routeWaypointLegNote, routeWaypointLegIssue, routeWaypointLegExtensions
+    ){
+        this.id = id;
         this.legCoordinates = [[],[]];
-        this.routeWaypointLegStarboardXTDL = parseInt(object?.routeWaypointLegStarboardXTDL?._text) || 0;
-        this.routeWaypointLegPortXTDL = parseInt(object?.routeWaypointLegPortXTDL?._text) || 0;
-        this.routeWaypointLegStarboardCL = parseInt(object?.routeWaypointLegStarboardCL?._text) || 0;
-        this.routeWaypointLegPortCL = parseInt(object?.routeWaypointLegPortCL?._text) || 0;
-        this.routeWaypointLegSafetyContour = parseFloat(object?.routeWaypointLegSafetyContour?._text) || 0.0;
-        this.routeWaypointLegSafetyDepth = parseFloat(object?.routeWaypointLegSafetyDepth?._text) || 0.0;
-        this.routeWaypointLegGeometryType = parseInt(object?.routeWaypointLegGeometryType?._text) || 1;
-        this.routeWaypointLegSOGMin = parseFloat(object?.routeWaypointLegSOGMin?._text) || 0.0;
-        this.routeWaypointLegSOGMax = parseFloat(object?.routeWaypointLegSOGMax?._text) || 0.0;
-        this.routeWaypointLegSTWMin = parseFloat(object?.routeWaypointLegSTWMin?._text) || 0.0;
-        this.routeWaypointLegSTWMax = parseFloat(object?.routeWaypointLegSTWMax?._text) || 0.0;
-        this.routeWaypointLegDraft = parseFloat(object?.routeWaypointLegDraft?._text) || 0.0;
-        this.routeWaypointLegDraftForward = parseFloat(object?.routeWaypointLegDraftForward?._text) || 0.0;
-        this.routeWaypointLegDraftAft = parseFloat(object?.routeWaypointLegDraftAft?._text) || 0.0;
-        this.routeWaypointLegDraftMax = parseFloat(object?.routeWaypointLegDraftMax?._text) || 0.0;
-        this.routeWaypointLegAirDraftMax = parseFloat(object?.routeWaypointLegAirDraftMax?._text) || 0.0;
-        this.routeWaypointLegBeamMax = parseFloat(object?.routeWaypointLegBeamMax?._text) || 0.0;
-        this.routeWaypointLegLengthMax = parseFloat(object?.routeWaypointLegLengthMax?._text) || 0.0;
-        this.routeWaypointLegStaticUKC = parseFloat(object?.routeWaypointLegStaticUKC?._text) || 0.0;
-        this.routeWaypointLegDynamicUKC = parseFloat(object?.routeWaypointLegDynamicUKC?._text) || 0.0;
-        this.routeWaypointLegSafetyMargin = parseFloat(object?.routeWaypointLegSafetyMargin?._text) || 0.0;
-        this.routeWaypointLegNote = object?.routeWaypointLegNote?._text || '';
-        this.routeWaypointLegIssue = object?.routeWaypointLegIssue?._text || '';
+        this.routeWaypointLegStarboardXTDL = routeWaypointLegStarboardXTDL;
+        this.routeWaypointLegPortXTDL = routeWaypointLegPortXTDL;
+        this.routeWaypointLegStarboardCL = routeWaypointLegStarboardCL;
+        this.routeWaypointLegPortCL = routeWaypointLegPortCL;
+        this.routeWaypointLegSafetyContour = routeWaypointLegSafetyContour;
+        this.routeWaypointLegSafetyDepth = routeWaypointLegSafetyDepth;
+        this.routeWaypointLegGeometryType = routeWaypointLegGeometryType;
+        this.routeWaypointLegSOGMin = routeWaypointLegSOGMin;
+        this.routeWaypointLegSOGMax = routeWaypointLegSOGMax;
+        this.routeWaypointLegSTWMin = routeWaypointLegSTWMin;
+        this.routeWaypointLegSTWMax = routeWaypointLegSTWMax;
+        this.routeWaypointLegDraft = routeWaypointLegDraft;
+        this.routeWaypointLegDraftForward = routeWaypointLegDraftForward;
+        this.routeWaypointLegDraftAft = routeWaypointLegDraftAft;
+        this.routeWaypointLegDraftMax = routeWaypointLegDraftMax;
+        this.routeWaypointLegAirDraftMax = routeWaypointLegAirDraftMax;
+        this.routeWaypointLegBeamMax = routeWaypointLegBeamMax;
+        this.routeWaypointLegLengthMax = routeWaypointLegLengthMax;
+        this.routeWaypointLegStaticUKC = routeWaypointLegStaticUKC;
+        this.routeWaypointLegDynamicUKC =  routeWaypointLegDynamicUKC;
+        this.routeWaypointLegSafetyMargin = routeWaypointLegSafetyMargin;
+        this.routeWaypointLegNote = routeWaypointLegNote;
+        this.routeWaypointLegIssue = routeWaypointLegIssue;
         this.type = 'route-leg';
-        this.routeWaypointLegExtensions = {};
-
-        if(object?.routeWaypointLegExtensions instanceof Object){
-            this.routeWaypointLegExtensions = {
-                manufacturerId: object?.routeWaypointLegExtensions?._attributes?.routeExtensionsManufacturerId || '',
-                routeExtensionsName: object?.routeWaypointLegExtensions?._attributes?.routeExtensionsName || '',
-                version: parseInt(object?.routeWaypointLegExtensions?._attributes?.routeExtensionsVersion) || 0,
-                note: object?.routeWaypointLegExtensions?.routeExtensionsNote?._text || ''
-            }
-        }
+        this.routeWaypointLegExtensions = routeWaypointLegExtensions;
     }
 
 

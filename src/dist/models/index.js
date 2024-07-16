@@ -1,6 +1,6 @@
 import { RouteWaypoint } from "./RouteWaypoint.js";
 import { RouteWaypointLeg } from "./RouteWaypointLeg.js";
-import { PointActionPoint, CurveActionPoint, SurfaceActionPoint } from "./RouteActionpoint.js";
+import { PointActionPoint, CurveActionPoint, SurfaceActionPoint, createActionPoint } from "./RouteActionpoint.js";
 
 
 export{ 
@@ -8,5 +8,6 @@ export{
     RouteWaypointLeg, 
     PointActionPoint,
     CurveActionPoint,
-    SurfaceActionPoint
+    SurfaceActionPoint,
+    createActionPoint
 };
