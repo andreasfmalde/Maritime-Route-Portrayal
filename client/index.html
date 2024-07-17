@@ -16,9 +16,14 @@
     <div id="info"></div>
     <form id="form">
         <input type="file" id="file" accept=".s421,.gml,.xml,.rtz"/>
+        <label for="format-select">Format:</label>
+        <select name="format" id="format-select">
+            <option value="s421">S421</option>
+            <option value="rtz">RTZ</option>
+        </select>
         <button type="submit" id="submit">Upload</button>
     </form>
-
+    <br>
     <input type="checkbox" id="chk-xtdl" name="chk" checked >
     <label for="chk-xtdl">XTDL</label>
     <input type="checkbox" id="chk-cl" name="chk" checked>

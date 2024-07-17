@@ -34,8 +34,8 @@ try {
     if (data == null) {
         throw new Error('No data');
     }
-    geojson = new RTZtoGeoJSON(data);
-    //geojson = S421ToGeoJSON(data);
+    geojson = S421ToGeoJSON(text);
+   
     document.querySelector('#info').textContent = '';
 } catch (e) {
     document.querySelector('#info').textContent = 'No source file found online. Upload a file to display a route.';
@@ -46,8 +46,10 @@ map.on('load', async () => {
 
     const form = document.querySelector('form');
     const fileInput = document.querySelector('input[type="file"]');
+    const select = document.querySelector('select');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log(select.value);
         const reader = new FileReader();
         const file = fileInput.files[0];
        if(!file){
@@ -57,9 +59,12 @@ map.on('load', async () => {
         reader.readAsText(file, "UTF-8");
         reader.onload = async (e) => {
             const text = e.target.result;
-
-            geojson = RTZtoGeoJSON(text);
-            //geojson = S421ToGeoJSON(text);
+            if(select.value === 'rtz'){
+                geojson = RTZtoGeoJSON(text);
+            }else{
+                geojson = S421ToGeoJSON(text);
+            }
+            
             if (geojson) {
                 document.querySelector('#info').textContent = '';
                 if (map.getSource('geojsonSource')) {
