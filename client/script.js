@@ -1,4 +1,4 @@
-import { createLayers, S421ToGeoJSON } from '../src/s421convert.min.js';
+import { createLayers, RTZtoGeoJSON, S421ToGeoJSON } from '../src/s421convert.min.js';
 const style = {
     "version": 8,
     "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -34,7 +34,8 @@ try {
     if (data == null) {
         throw new Error('No data');
     }
-    geojson = S421ToGeoJSON(data);
+    geojson = new RTZtoGeoJSON(data);
+    //geojson = S421ToGeoJSON(data);
     document.querySelector('#info').textContent = '';
 } catch (e) {
     document.querySelector('#info').textContent = 'No source file found online. Upload a file to display a route.';
@@ -57,7 +58,8 @@ map.on('load', async () => {
         reader.onload = async (e) => {
             const text = e.target.result;
 
-            geojson = S421ToGeoJSON(text);
+            geojson = RTZtoGeoJSON(text);
+            //geojson = S421ToGeoJSON(text);
             if (geojson) {
                 document.querySelector('#info').textContent = '';
                 if (map.getSource('geojsonSource')) {

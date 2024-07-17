@@ -134,13 +134,6 @@ function curveWaypointLeg(W1, W2, W3) {
     // Calculate the circle center and the tangent points between the circle and the imaginary lines
     const [circleCenter, tangent1, tangent2] = calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2);
 
-    // Calculate bearing from circle center to tangent points
-    const cBearing1 = bearing(circleCenter, tangent1);
-    const cBearing2 = bearing(circleCenter, tangent2);
-
-    // Confirm that the order of the bearings is correct for drawing the circle arc
-    const [b1, b2] = determineBearingOrder(cBearing1, cBearing2);
-
     // Specify the tangent points, making it easier to delete them later
     tangent1.properties = {
         "waypoint": W2.getId(),
@@ -154,6 +147,16 @@ function curveWaypointLeg(W1, W2, W3) {
         "routeWaypointLeg":W3?.getRouteWaypointLeg() || "",
         "used": false
     };
+    if(circleCenter == null){
+        return [circleCenter, tangent1, tangent2];
+    }
+
+    // Calculate bearing from circle center to tangent points
+    const cBearing1 = bearing(circleCenter, tangent1);
+    const cBearing2 = bearing(circleCenter, tangent2);
+
+    // Confirm that the order of the bearings is correct for drawing the circle arc
+    const [b1, b2] = determineBearingOrder(cBearing1, cBearing2);
 
     // Create the lineString for the circle arc
     const circleArc = lineArc(circleCenter, W2.getRadius(), b1, b2, { steps: 100 });
@@ -223,7 +226,7 @@ function calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2) {
 
         if (count > 60) {
             console.log(`Used more than ${count} iterations... breaking`)
-            break
+            return [null, point(W2.getCoordinates()), point(W2.getCoordinates())];
         }
         count++;
 

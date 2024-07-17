@@ -3,8 +3,6 @@ import {
 } from "../models/index.js";
 import {  getCoordinates } from "../utility.js";
 
-////// Converter specific functions
-
 export function generateS421RouteWaypoint(object){
     if (Object.keys(object.geometry).length === 0) {
         throw new Error('geometry is required for waypoint');

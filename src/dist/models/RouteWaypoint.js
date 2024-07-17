@@ -8,6 +8,9 @@ export class RouteWaypoint{
 
         this.id = id;
         this.reference = reference || '';
+        if(coordinates[0] === NaN || coordinates[1] === NaN){
+            throw new Error("Invalid coordinates");
+        }
         this.coordinates = coordinates;
         this.routeWaypointName = routeWaypointName || '';
         this.routeWaypointFixed = routeWaypointFixed || false;
