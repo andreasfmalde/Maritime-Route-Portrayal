@@ -1,7 +1,7 @@
 import {
     point, bearing, transformScale, transformTranslate,
     lineString, polygon, lineIntersect, distance, nearestPointOnLine
-} from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+} from '@turf/turf';
 
 export class RouteWaypointLeg{
     constructor(

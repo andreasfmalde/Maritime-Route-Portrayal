@@ -1,7 +1,7 @@
 import {
     featureCollection,  point, lineString,
     bearing, lineArc, destination, lineIntersect
-} from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+} from '@turf/turf'; 
 import { RouteWaypointLeg } from "./models/index.js";
 
 

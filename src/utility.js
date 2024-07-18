@@ -1,5 +1,4 @@
-import 'https://cdn.jsdelivr.net/npm/xml-js@1.6.11/dist/xml-js.min.js'; // For testing, change to: 'xml-js'
-//import * as xmljs from 'xml-js';
+import { xml2json } from 'xml-js';
 
 export function nameSpaceTrimmer(str) {
     return str.split(':').pop();

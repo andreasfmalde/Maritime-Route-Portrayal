@@ -1,4 +1,4 @@
-import { point } from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+import { point } from '@turf/turf';
 
 export class RouteWaypoint{
     constructor(id, reference, routeWaypointName, coordinates,

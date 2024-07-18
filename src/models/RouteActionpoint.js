@@ -1,4 +1,4 @@
-import {point, lineString, polygon}  from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+import {point, lineString, polygon}  from '@turf/turf';
 class RouteActionPoint{
     constructor(id, routeActionPointID, routeActionPointName, routeActionPointRadius,
         routeActionPointTimeToAct, routeActionPointRequiredAction, routeActionPointRequiredActionDescription,
