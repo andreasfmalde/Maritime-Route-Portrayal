@@ -1,4 +1,3 @@
-import { createLayers, RTZtoGeoJSON, S421ToGeoJSON } from '../src/s421convert.min.js';
 const style = {
     "version": 8,
     "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -34,7 +33,7 @@ try {
     if (data == null) {
         throw new Error('No data');
     }
-    geojson = S421ToGeoJSON(text);
+    geojson = routePortrayal.S421ToGeoJSON(text);
    
     document.querySelector('#info').textContent = '';
 } catch (e) {
@@ -60,12 +59,12 @@ map.on('load', async () => {
             const text = e.target.result;
             try{
                 if(select.value === 'rtz'){
-                    geojson = RTZtoGeoJSON(text);
+                    geojson = routePortrayal.RTZtoGeoJSON(text);
                 }else{
-                    geojson = S421ToGeoJSON(text);
+                    geojson = routePortrayal.S421ToGeoJSON(text);
                 }
             }catch(e){
-                document.querySelector('#info').textContent = 'Invalid file format';
+                document.querySelector('#info').textContent = 'Invalid file format: '+ e ;
             }
             
             if (geojson) {
@@ -77,7 +76,7 @@ map.on('load', async () => {
                         'type': 'geojson',
                         'data': geojson
                     });
-                    const layers = createLayers('geojsonSource');
+                    const layers = routePortrayal.createLayers('geojsonSource');
                     for (let layer of layers) {
                         map.addLayer(layer);
                     }
@@ -93,7 +92,7 @@ map.on('load', async () => {
             'type': 'geojson',
             'data': geojson
         });
-        const layers = createLayers('geojsonSource');
+        const layers = routePortrayal.createLayers('geojsonSource');
         for (let layer of layers) {
             map.addLayer(layer);
         }
