@@ -7,8 +7,13 @@ export class RouteWaypoint{
         routeWaypointExtensions){
 
         this.id = id;
+        if(this.id == null || this.id == undefined || isNaN(this.id)){
+            throw new Error("Invalid id");
+        }
         this.reference = reference || '';
-        if(coordinates[0] === NaN || coordinates[1] === NaN){
+        if(isNaN(coordinates[0])  ||isNaN(coordinates[1]) ||
+        coordinates[0] === null || coordinates[1] === null){
+            
             throw new Error("Invalid coordinates");
         }
         this.coordinates = coordinates;
@@ -60,7 +65,7 @@ export class RouteWaypoint{
             {
                 type: this.type,
                 id: this.id,
-                radius: this.radius,
+                radius: this.routeWaypointTurnRadius,
                 routeWaypointLeg: this.routeWaypointLeg
             }
         )
