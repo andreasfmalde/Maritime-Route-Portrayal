@@ -225,7 +225,6 @@ function calculateCircleCenterCoordinates(midLineBearing, W2, line1, line2) {
         }
 
         if (count > 60) {
-            console.log(`Used more than ${count} iterations... breaking`)
             return [null, point(W2.getCoordinates()), point(W2.getCoordinates())];
         }
         count++;
