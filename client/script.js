@@ -49,7 +49,6 @@ map.on('load', async () => {
     const select = document.querySelector('select');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log(select.value);
         const reader = new FileReader();
         const file = fileInput.files[0];
        if(!file){
@@ -59,10 +58,14 @@ map.on('load', async () => {
         reader.readAsText(file, "UTF-8");
         reader.onload = async (e) => {
             const text = e.target.result;
-            if(select.value === 'rtz'){
-                geojson = RTZtoGeoJSON(text);
-            }else{
-                geojson = S421ToGeoJSON(text);
+            try{
+                if(select.value === 'rtz'){
+                    geojson = RTZtoGeoJSON(text);
+                }else{
+                    geojson = S421ToGeoJSON(text);
+                }
+            }catch(e){
+                document.querySelector('#info').textContent = 'Invalid file format';
             }
             
             if (geojson) {
@@ -84,7 +87,6 @@ map.on('load', async () => {
 
         };
     });
-
 
     if (geojson) {
         map.addSource('geojsonSource', {
@@ -127,7 +129,7 @@ map.on('mouseenter', 'route-leg-xtdl',(e) => {
     map.getCanvas().style.cursor = 'pointer';
     const feature = e.features[0];
     const id = feature.properties.routeLegID;
-    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: XTDL`;
+    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: XTD(L)`;
     popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
 });
 
