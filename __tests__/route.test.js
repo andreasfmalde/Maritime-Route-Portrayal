@@ -1,10 +1,11 @@
-import { RouteWaypoint } from "../src/dist/models";
+import { RouteWaypoint } from "../src/models";
 import { waypoints, curveWaypointLegResult } from "../data/test/testData";
+import { getCoordinates } from "../src/utility";
 import {
     convertTo360_TEST, convertToNorthBearing_TEST,
     calculateMidLineBearing_TEST, determineBearingOrder_TEST,
     curveWaypointLeg_TEST
-} from "../src/dist/S421/converter";
+} from "../src/route";
 
 
 
@@ -166,12 +167,21 @@ describe('determineBearingOrder tests', ()=>{
 describe('curveWaypointLeg tests', ()=>{
 
     test('valid lineString arc and tangentpoints are returned based on the middle point radius',()=>{
-        let WP1 = new RouteWaypoint(waypoints[0]);
-        let WP2 = new RouteWaypoint(waypoints[1]);
-        let WP3 = new RouteWaypoint(waypoints[2]);
+        let WPs = [];
+        for(let wp of waypoints){
+            WPs.push(new RouteWaypoint(
+                parseInt(wp.routeWaypointID._text),
+                wp._attributes.id,
+                wp.routeWaypointName._text,
+                getCoordinates(wp.geometry.pointProperty.Point.pos._text),
+                false,
+                parseFloat(wp.routeWaypointTurnRadius._text),
+                wp.routeWaypointLeg._attributes.href.split('#')[1],
+                {}
+            ));
+        }
         
-        let result = curveWaypointLeg_TEST(WP1, WP2, WP3);
-
+        let result = curveWaypointLeg_TEST(WPs[0], WPs[1], WPs[2]);
         expect(result).not.toBeNull();
         expect(result.length).toBe(3);
         expect(result).toEqual(curveWaypointLegResult);
