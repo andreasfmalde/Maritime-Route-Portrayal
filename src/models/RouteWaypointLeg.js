@@ -14,6 +14,9 @@ export class RouteWaypointLeg{
         routeWaypointLegSafetyMargin, routeWaypointLegNote, routeWaypointLegIssue, routeWaypointLegExtensions
     ){
         this.id = id;
+        if(this.id === null || this.id === undefined || this.id === ''){
+            throw new Error('Invalid id');
+        }
         this.legCoordinates = [[],[]];
         this.routeWaypointLegStarboardXTDL = routeWaypointLegStarboardXTDL || 0;
         this.routeWaypointLegPortXTDL = routeWaypointLegPortXTDL || 0;
@@ -73,6 +76,9 @@ export class RouteWaypointLeg{
     }
 
     appendLegLineCoordinates(coordinates){
+        if(this.legCoordinates[0].length === 0 || this.legCoordinates[1].length === 0){
+            throw new Error('No coordinates to append to');
+        }
         let distance1 = distance(point(coordinates[1]),point(this.legCoordinates[0]));
         let distance2 = distance(point(coordinates[1]),point(this.legCoordinates[this.legCoordinates.length-1]));
 

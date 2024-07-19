@@ -111,7 +111,6 @@ describe('RouteWaypoint tests', () => {
         };
 
         const geoJSON = waypoint.toGeoJSON();
-        console.log(geoJSON);
         expect(geoJSON).toStrictEqual(expectedResult);
     });
 
