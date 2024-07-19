@@ -1,4 +1,3 @@
-import { createLayers, S421ToGeoJSON } from '../src/s421convert.min.js';
 const style = {
     "version": 8,
     "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -34,7 +33,8 @@ try {
     if (data == null) {
         throw new Error('No data');
     }
-    geojson = S421ToGeoJSON(data);
+    geojson = routePortrayal.S421ToGeoJSON(text);
+   
     document.querySelector('#info').textContent = '';
 } catch (e) {
     document.querySelector('#info').textContent = 'No source file found online. Upload a file to display a route.';
@@ -45,6 +45,7 @@ map.on('load', async () => {
 
     const form = document.querySelector('form');
     const fileInput = document.querySelector('input[type="file"]');
+    const select = document.querySelector('select');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const reader = new FileReader();
@@ -56,8 +57,16 @@ map.on('load', async () => {
         reader.readAsText(file, "UTF-8");
         reader.onload = async (e) => {
             const text = e.target.result;
-
-            geojson = S421ToGeoJSON(text);
+            try{
+                if(select.value === 'rtz'){
+                    geojson = routePortrayal.RTZtoGeoJSON(text);
+                }else{
+                    geojson = routePortrayal.S421ToGeoJSON(text);
+                }
+            }catch(e){
+                document.querySelector('#info').textContent = 'Invalid file format: '+ e ;
+            }
+            
             if (geojson) {
                 document.querySelector('#info').textContent = '';
                 if (map.getSource('geojsonSource')) {
@@ -67,7 +76,7 @@ map.on('load', async () => {
                         'type': 'geojson',
                         'data': geojson
                     });
-                    const layers = createLayers('geojsonSource');
+                    const layers = routePortrayal.createLayers('geojsonSource');
                     for (let layer of layers) {
                         map.addLayer(layer);
                     }
@@ -78,13 +87,12 @@ map.on('load', async () => {
         };
     });
 
-
     if (geojson) {
         map.addSource('geojsonSource', {
             'type': 'geojson',
             'data': geojson
         });
-        const layers = createLayers('geojsonSource');
+        const layers = routePortrayal.createLayers('geojsonSource');
         for (let layer of layers) {
             map.addLayer(layer);
         }
@@ -120,7 +128,7 @@ map.on('mouseenter', 'route-leg-xtdl',(e) => {
     map.getCanvas().style.cursor = 'pointer';
     const feature = e.features[0];
     const id = feature.properties.routeLegID;
-    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: XTDL`;
+    const html = `<strong>${id}</strong><br> Distance: ${feature.properties.distance} meters <br> Side: ${feature.properties.side}<br>Type: XTD(L)`;
     popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
 });
 

@@ -1,46 +1,48 @@
 import {
     point, bearing, transformScale, transformTranslate,
     lineString, polygon, lineIntersect, distance, nearestPointOnLine
-} from 'https://cdn.jsdelivr.net/npm/@turf/turf@7.0.0/+esm'; // For testing, change to: '@turf/turf'
+} from '@turf/turf';
 
 export class RouteWaypointLeg{
-    constructor(object){
-        this.id = object._attributes.id;
-        this.legCoordinates = [[],[]];
-        this.routeWaypointLegStarboardXTDL = parseInt(object?.routeWaypointLegStarboardXTDL?._text) || 0;
-        this.routeWaypointLegPortXTDL = parseInt(object?.routeWaypointLegPortXTDL?._text) || 0;
-        this.routeWaypointLegStarboardCL = parseInt(object?.routeWaypointLegStarboardCL?._text) || 0;
-        this.routeWaypointLegPortCL = parseInt(object?.routeWaypointLegPortCL?._text) || 0;
-        this.routeWaypointLegSafetyContour = parseFloat(object?.routeWaypointLegSafetyContour?._text) || 0.0;
-        this.routeWaypointLegSafetyDepth = parseFloat(object?.routeWaypointLegSafetyDepth?._text) || 0.0;
-        this.routeWaypointLegGeometryType = parseInt(object?.routeWaypointLegGeometryType?._text) || 1;
-        this.routeWaypointLegSOGMin = parseFloat(object?.routeWaypointLegSOGMin?._text) || 0.0;
-        this.routeWaypointLegSOGMax = parseFloat(object?.routeWaypointLegSOGMax?._text) || 0.0;
-        this.routeWaypointLegSTWMin = parseFloat(object?.routeWaypointLegSTWMin?._text) || 0.0;
-        this.routeWaypointLegSTWMax = parseFloat(object?.routeWaypointLegSTWMax?._text) || 0.0;
-        this.routeWaypointLegDraft = parseFloat(object?.routeWaypointLegDraft?._text) || 0.0;
-        this.routeWaypointLegDraftForward = parseFloat(object?.routeWaypointLegDraftForward?._text) || 0.0;
-        this.routeWaypointLegDraftAft = parseFloat(object?.routeWaypointLegDraftAft?._text) || 0.0;
-        this.routeWaypointLegDraftMax = parseFloat(object?.routeWaypointLegDraftMax?._text) || 0.0;
-        this.routeWaypointLegAirDraftMax = parseFloat(object?.routeWaypointLegAirDraftMax?._text) || 0.0;
-        this.routeWaypointLegBeamMax = parseFloat(object?.routeWaypointLegBeamMax?._text) || 0.0;
-        this.routeWaypointLegLengthMax = parseFloat(object?.routeWaypointLegLengthMax?._text) || 0.0;
-        this.routeWaypointLegStaticUKC = parseFloat(object?.routeWaypointLegStaticUKC?._text) || 0.0;
-        this.routeWaypointLegDynamicUKC = parseFloat(object?.routeWaypointLegDynamicUKC?._text) || 0.0;
-        this.routeWaypointLegSafetyMargin = parseFloat(object?.routeWaypointLegSafetyMargin?._text) || 0.0;
-        this.routeWaypointLegNote = object?.routeWaypointLegNote?._text || '';
-        this.routeWaypointLegIssue = object?.routeWaypointLegIssue?._text || '';
-        this.type = 'route-leg';
-        this.routeWaypointLegExtensions = {};
-
-        if(object?.routeWaypointLegExtensions instanceof Object){
-            this.routeWaypointLegExtensions = {
-                manufacturerId: object?.routeWaypointLegExtensions?._attributes?.routeExtensionsManufacturerId || '',
-                routeExtensionsName: object?.routeWaypointLegExtensions?._attributes?.routeExtensionsName || '',
-                version: parseInt(object?.routeWaypointLegExtensions?._attributes?.routeExtensionsVersion) || 0,
-                note: object?.routeWaypointLegExtensions?.routeExtensionsNote?._text || ''
-            }
+    constructor(
+        id, routeWaypointLegStarboardXTDL, routeWaypointLegPortXTDL,
+        routeWaypointLegStarboardCL, routeWaypointLegPortCL, routeWaypointLegSafetyContour,
+        routeWaypointLegSafetyDepth, routeWaypointLegGeometryType, routeWaypointLegSOGMin,
+        routeWaypointLegSOGMax, routeWaypointLegSTWMin, routeWaypointLegSTWMax, routeWaypointLegDraft,
+        routeWaypointLegDraftForward, routeWaypointLegDraftAft, routeWaypointLegDraftMax, routeWaypointLegAirDraftMax,
+        routeWaypointLegBeamMax, routeWaypointLegLengthMax, routeWaypointLegStaticUKC, routeWaypointLegDynamicUKC,
+        routeWaypointLegSafetyMargin, routeWaypointLegNote, routeWaypointLegIssue, routeWaypointLegExtensions
+    ){
+        this.id = id;
+        if(this.id === null || this.id === undefined || this.id === ''){
+            throw new Error('Invalid id');
         }
+        this.legCoordinates = [[],[]];
+        this.routeWaypointLegStarboardXTDL = routeWaypointLegStarboardXTDL || 0;
+        this.routeWaypointLegPortXTDL = routeWaypointLegPortXTDL || 0;
+        this.routeWaypointLegStarboardCL = routeWaypointLegStarboardCL || 0;
+        this.routeWaypointLegPortCL = routeWaypointLegPortCL || 0;
+        this.routeWaypointLegSafetyContour = routeWaypointLegSafetyContour || 0.0;
+        this.routeWaypointLegSafetyDepth = routeWaypointLegSafetyDepth || 0.0;
+        this.routeWaypointLegGeometryType = routeWaypointLegGeometryType || 1;
+        this.routeWaypointLegSOGMin = routeWaypointLegSOGMin || 0.0;
+        this.routeWaypointLegSOGMax = routeWaypointLegSOGMax || 0.0;
+        this.routeWaypointLegSTWMin = routeWaypointLegSTWMin || 0.0;
+        this.routeWaypointLegSTWMax = routeWaypointLegSTWMax || 0.0;
+        this.routeWaypointLegDraft = routeWaypointLegDraft || 0.0;
+        this.routeWaypointLegDraftForward = routeWaypointLegDraftForward || 0.0;
+        this.routeWaypointLegDraftAft = routeWaypointLegDraftAft || 0.0;
+        this.routeWaypointLegDraftMax = routeWaypointLegDraftMax || 0.0;
+        this.routeWaypointLegAirDraftMax = routeWaypointLegAirDraftMax || 0.0;
+        this.routeWaypointLegBeamMax = routeWaypointLegBeamMax || 0.0;
+        this.routeWaypointLegLengthMax = routeWaypointLegLengthMax || 0.0;
+        this.routeWaypointLegStaticUKC = routeWaypointLegStaticUKC || 0.0;
+        this.routeWaypointLegDynamicUKC =  routeWaypointLegDynamicUKC || 0.0;
+        this.routeWaypointLegSafetyMargin = routeWaypointLegSafetyMargin || 0.0;
+        this.routeWaypointLegNote = routeWaypointLegNote || '';
+        this.routeWaypointLegIssue = routeWaypointLegIssue || '';
+        this.type = 'route-leg';
+        this.routeWaypointLegExtensions = routeWaypointLegExtensions;
     }
 
 
@@ -74,6 +76,9 @@ export class RouteWaypointLeg{
     }
 
     appendLegLineCoordinates(coordinates){
+        if(this.legCoordinates[0].length === 0 || this.legCoordinates[1].length === 0){
+            throw new Error('No coordinates to append to');
+        }
         let distance1 = distance(point(coordinates[1]),point(this.legCoordinates[0]));
         let distance2 = distance(point(coordinates[1]),point(this.legCoordinates[this.legCoordinates.length-1]));
 
