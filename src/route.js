@@ -30,14 +30,13 @@ export function RouteToGeoJSON(waypointLegs, waypoints, actionPoints) {
     // Create waypointleg curves
     for (let i = 1; i < waypoints.length - 1; i++) {
         const [circleCenter, tanget1, tangent2] = curveWaypointLeg(waypoints[i - 1], waypoints[i], waypoints[i + 1]);
-        if (circleCenter != null) {
+        if (circleCenter != null) { 
             waypointLegs[circleCenter.properties.routeWaypointLeg].setCoordinates([...circleCenter.geometry.coordinates]);
         } else {
             waypointLegs[waypoints[i].getRouteWaypointLeg()].setCoordinates([waypoints[i].getCoordinates()]);
         }
         tangentPoints.push(tanget1, tangent2);
     }
-
     // Create leg lines between curves and add them to corresponding waypointLegs
     for (let point of tangentPoints) {
         if (point.properties.used) {

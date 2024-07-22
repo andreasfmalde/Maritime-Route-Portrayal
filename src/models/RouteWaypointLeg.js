@@ -76,15 +76,22 @@ export class RouteWaypointLeg{
     }
 
     appendLegLineCoordinates(coordinates){
-        if(this.legCoordinates[0].length === 0 || this.legCoordinates[1].length === 0){
+        if( this.legCoordinates[0].length === 0){
             throw new Error('No coordinates to append to');
         }
-        let distance1 = distance(point(coordinates[1]),point(this.legCoordinates[0]));
-        let distance2 = distance(point(coordinates[1]),point(this.legCoordinates[this.legCoordinates.length-1]));
+        if(this.legCoordinates.length > 1){
+            if( this.legCoordinates[1].length === 0){
+                throw new Error('No coordinates to append to');
+            }
+            let distance1 = distance(point(coordinates[1]),point(this.legCoordinates[0]));
+            let distance2 = distance(point(coordinates[1]),point(this.legCoordinates[this.legCoordinates.length-1]));
+    
+            if(distance2 < distance1){
+                this.legCoordinates.reverse();
+            }
 
-        if(distance2 < distance1){
-            this.legCoordinates.reverse();
         }
+        
         coordinates.splice(coordinates.length-1,1);
         this.legCoordinates.unshift(...coordinates);
     }
@@ -186,7 +193,7 @@ export class RouteWaypointLeg{
                 const intersect = lineIntersect(firstLine, secondLine);
                 if (intersect.features.length > 0) {
                     offsetCoords.push(intersect.features[0].geometry.coordinates);
-                }
+                }else offsetCoords.push(offsetLines[i+1][0]);
     
             } else offsetCoords.push(offsetLines[i][1]); 
         }
