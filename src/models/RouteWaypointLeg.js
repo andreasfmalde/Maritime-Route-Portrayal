@@ -204,7 +204,7 @@ export class RouteWaypointLeg{
     static updateLegCorridors(list){
         let last = list[list.length-1];
         let secondLast = list[list.length-2];
-        let length, index, number;;
+        let length, index, number;
         const backCoordinate = point(secondLast.geometry.coordinates[secondLast.geometry.coordinates.length-1]); 
     
         if(last.properties.distance !== secondLast.properties.distance){
@@ -219,7 +219,7 @@ export class RouteWaypointLeg{
             secondLast.geometry.coordinates.push(last.geometry.coordinates[0]);
         }
         else{
-            let closestPoint = nearestPointOnLine(secondLast, last.geometry.coordinates[1]);
+            const closestPoint = nearestPointOnLine(secondLast, last.geometry.coordinates[1]);
             length = secondLast.geometry.coordinates.length;
             index = closestPoint.properties.index;
             number = length-index-1;
@@ -229,12 +229,16 @@ export class RouteWaypointLeg{
     }
 
     static createCorridorPolygons(starboardLine, portLine){
+        if(starboardLine.geometry?.coordinates === undefined || portLine.geometry?.coordinates === undefined
+            || starboardLine.geometry?.type !== 'LineString' || portLine.geometry?.type !== 'LineString')
+        {
+            throw new Error('Invalid input. Must be lineString.');
+        }
         const coordinates = [];
         let reverseArray = [...portLine.geometry.coordinates].reverse();
         coordinates.push(...starboardLine.geometry.coordinates)
-        coordinates.push(starboardLine.geometry.coordinates[starboardLine.geometry.coordinates.length-1],reverseArray[0]);
         coordinates.push(...reverseArray);
-        coordinates.push(reverseArray[reverseArray.length-1],starboardLine.geometry.coordinates[0]);
+        coordinates.push(starboardLine.geometry.coordinates[0]);
 
         let type = starboardLine.properties.type === "route-leg-XTDL" ? "route-leg-corridor-xtdl" : "route-leg-corridor-cl";
         return polygon([coordinates],{
