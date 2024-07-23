@@ -71,6 +71,7 @@ export class CurveActionPoint extends RouteActionPoint{
             routeActionPointTimeToAct, routeActionPointRequiredAction, routeActionPointRequiredActionDescription,
             routeActionPointExtensions);
         this.type = 'actionpoint-curve';
+        if(coordinates.length < 2) throw new Error("Line must have at least 2 points");
         this.coordinates = coordinates || [[],[]];
     }
 
@@ -90,6 +91,11 @@ export class SurfaceActionPoint extends RouteActionPoint{
             routeActionPointTimeToAct, routeActionPointRequiredAction, routeActionPointRequiredActionDescription,
             routeActionPointExtensions);
         this.type = 'actionpoint-surface';
+        if(coordinates.length < 3) throw new Error("Polygon must have at least 3 points");
+        if(coordinates[0][0] !== coordinates[coordinates.length-1][0] || 
+           coordinates[0][1] !== coordinates[coordinates.length-1][1]){
+            coordinates.push(coordinates[0]);
+           } 
         this.coordinates = coordinates || [[],[]];
     }
 
