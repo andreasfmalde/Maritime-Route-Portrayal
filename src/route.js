@@ -304,4 +304,5 @@ export {
     calculateCircleCenterCoordinates as calculateCircleCenterCoordinates_TEST,
     determineBearingOrder as determineBearingOrder_TEST,
     curveWaypointLeg as curveWaypointLeg_TEST,
+    createCorridors as createCorridors_TEST
 };
