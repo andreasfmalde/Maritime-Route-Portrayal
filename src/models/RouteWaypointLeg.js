@@ -76,15 +76,22 @@ export class RouteWaypointLeg{
     }
 
     appendLegLineCoordinates(coordinates){
-        if(this.legCoordinates[0].length === 0 || this.legCoordinates[1].length === 0){
+        if( this.legCoordinates[0].length === 0){
             throw new Error('No coordinates to append to');
         }
-        let distance1 = distance(point(coordinates[1]),point(this.legCoordinates[0]));
-        let distance2 = distance(point(coordinates[1]),point(this.legCoordinates[this.legCoordinates.length-1]));
+        if(this.legCoordinates.length > 1){
+            if( this.legCoordinates[1].length === 0){
+                throw new Error('No coordinates to append to');
+            }
+            let distance1 = distance(point(coordinates[1]),point(this.legCoordinates[0]));
+            let distance2 = distance(point(coordinates[1]),point(this.legCoordinates[this.legCoordinates.length-1]));
+    
+            if(distance2 < distance1){
+                this.legCoordinates.reverse();
+            }
 
-        if(distance2 < distance1){
-            this.legCoordinates.reverse();
         }
+        
         coordinates.splice(coordinates.length-1,1);
         this.legCoordinates.unshift(...coordinates);
     }
@@ -186,7 +193,7 @@ export class RouteWaypointLeg{
                 const intersect = lineIntersect(firstLine, secondLine);
                 if (intersect.features.length > 0) {
                     offsetCoords.push(intersect.features[0].geometry.coordinates);
-                }
+                }else offsetCoords.push(offsetLines[i+1][0]);
     
             } else offsetCoords.push(offsetLines[i][1]); 
         }
@@ -197,7 +204,7 @@ export class RouteWaypointLeg{
     static updateLegCorridors(list){
         let last = list[list.length-1];
         let secondLast = list[list.length-2];
-        let length, index, number;;
+        let length, index, number;
         const backCoordinate = point(secondLast.geometry.coordinates[secondLast.geometry.coordinates.length-1]); 
     
         if(last.properties.distance !== secondLast.properties.distance){
@@ -212,7 +219,7 @@ export class RouteWaypointLeg{
             secondLast.geometry.coordinates.push(last.geometry.coordinates[0]);
         }
         else{
-            let closestPoint = nearestPointOnLine(secondLast, last.geometry.coordinates[1]);
+            const closestPoint = nearestPointOnLine(secondLast, last.geometry.coordinates[1]);
             length = secondLast.geometry.coordinates.length;
             index = closestPoint.properties.index;
             number = length-index-1;
@@ -221,13 +228,30 @@ export class RouteWaypointLeg{
         }
     }
 
-    static createCorridorPolygons(starboardLine, portLine){
+    static createCorridorPolygons(starboardLine, portLine, front=null, back=true){
+        if(starboardLine.geometry?.coordinates === undefined || portLine.geometry?.coordinates === undefined
+            || starboardLine.geometry?.type !== 'LineString' || portLine.geometry?.type !== 'LineString')
+        {
+            throw new Error('Invalid input. Must be lineString.');
+        }
+        const starboard = [...starboardLine.geometry.coordinates];
+        const port = [...portLine.geometry.coordinates];
+        // If back is false, the back coordinates should be removed before
+        // drawing the polygon.
+        if(!back){
+            starboard.pop();
+            port.pop();
+        }
+        // If front has valid coordinates, they should be added to the front of the
+        // starboard and port arrays before drawing the polygon.
+        if(front?.starboard) starboard.unshift(front.starboard);
+        if(front?.port) port.unshift(front.port);
+
         const coordinates = [];
-        let reverseArray = [...portLine.geometry.coordinates].reverse();
-        coordinates.push(...starboardLine.geometry.coordinates)
-        coordinates.push(starboardLine.geometry.coordinates[starboardLine.geometry.coordinates.length-1],reverseArray[0]);
+        let reverseArray = [...port].reverse();
+        coordinates.push(...starboard)
         coordinates.push(...reverseArray);
-        coordinates.push(reverseArray[reverseArray.length-1],starboardLine.geometry.coordinates[0]);
+        coordinates.push(starboard[0]);
 
         let type = starboardLine.properties.type === "route-leg-XTDL" ? "route-leg-corridor-xtdl" : "route-leg-corridor-cl";
         return polygon([coordinates],{

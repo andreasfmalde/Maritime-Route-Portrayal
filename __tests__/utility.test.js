@@ -149,5 +149,11 @@ describe('parseXML tests', ()=>{
         expect(result).toEqual(expectedResult);
     });
 
+    test('null returned with invalid xml',()=>{
+        const xml = "not valid xml";
+        const result = parseXML(xml);
+        expect(result).toBeNull();
+    });
+
     
 });

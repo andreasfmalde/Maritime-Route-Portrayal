@@ -9,11 +9,14 @@ export function RouteToGeoJSON(waypointLegs, waypoints, actionPoints) {
     const tangentPoints = [];
     const geoJSON = featureCollection([]);
 
+    if(waypoints == null || waypoints.length === 0 ){
+        throw new Error('No waypoints found');
+    }
 
     // Handle special case when the route only contains two waypoints
     if (waypoints.length === 2) {
         let leg;
-        if (Object.keys(waypointLegs).length === 1) {
+        if (waypointLegs !== null && Object.keys(waypointLegs).length === 1) {
             leg = waypointLegs[Object.keys(waypointLegs)[0]];
         } else {
             leg = new RouteWaypointLeg(waypoints[0].getRouteWaypointLeg() ||
@@ -30,14 +33,13 @@ export function RouteToGeoJSON(waypointLegs, waypoints, actionPoints) {
     // Create waypointleg curves
     for (let i = 1; i < waypoints.length - 1; i++) {
         const [circleCenter, tanget1, tangent2] = curveWaypointLeg(waypoints[i - 1], waypoints[i], waypoints[i + 1]);
-        if (circleCenter != null) {
+        if (circleCenter != null) { 
             waypointLegs[circleCenter.properties.routeWaypointLeg].setCoordinates([...circleCenter.geometry.coordinates]);
         } else {
             waypointLegs[waypoints[i].getRouteWaypointLeg()].setCoordinates([waypoints[i].getCoordinates()]);
         }
         tangentPoints.push(tanget1, tangent2);
     }
-
     // Create leg lines between curves and add them to corresponding waypointLegs
     for (let point of tangentPoints) {
         if (point.properties.used) {
@@ -83,20 +85,16 @@ export function RouteToGeoJSON(waypointLegs, waypoints, actionPoints) {
             if (xtdlPort.length > 1) RouteWaypointLeg.updateLegCorridors(xtdlPort);
             if (clStarboard.length > 1) RouteWaypointLeg.updateLegCorridors(clStarboard);
             if (clPort.length > 1) RouteWaypointLeg.updateLegCorridors(clPort);
-
-            if (xtdlStarboard.length > 1 && xtdlPort.length > 1) {
-                xtdlPolygons.push(RouteWaypointLeg.createCorridorPolygons(xtdlStarboard[xtdlStarboard.length - 2], xtdlPort[xtdlPort.length - 2]));
-            }
-            if (clStarboard.length > 1 && clPort.length > 1) {
-                clPolygons.push(RouteWaypointLeg.createCorridorPolygons(clStarboard[clStarboard.length - 2], clPort[clPort.length - 2]));
-            }
         }
     });
-    if (xtdlStarboard.length > 0) {
-        xtdlPolygons.push(RouteWaypointLeg.createCorridorPolygons(xtdlStarboard[xtdlStarboard.length - 1], xtdlPort[xtdlPort.length - 1]));
+
+    
+    if (xtdlStarboard.length > 0 && xtdlStarboard.length === xtdlPort.length){
+        createCorridors(xtdlStarboard, xtdlPort, xtdlPolygons);
     }
-    if (clStarboard.length > 0) {
-        clPolygons.push(RouteWaypointLeg.createCorridorPolygons(clStarboard[clStarboard.length - 1], clPort[clPort.length - 1]));
+
+    if (clStarboard.length > 0 && clStarboard.length === clPort.length){
+        createCorridors(clStarboard, clPort, clPolygons);
     }
 
     geoJSON.features.push(...xtdlStarboard, ...xtdlPort, ...clStarboard, ...clPort, ...xtdlPolygons, ...clPolygons);
@@ -104,6 +102,35 @@ export function RouteToGeoJSON(waypointLegs, waypoints, actionPoints) {
     geoJSON.features.push(...actionPoints);
     return geoJSON;
 }
+
+// For now, this function assumes that the corridor distance is the
+// same for both starboard and port side. This is not always the case
+// and should be fixed in the future.
+function createCorridors(starboard, port, polygons) {
+    let front, back;
+    for(let i = 0; i < starboard.length; i++){
+        front = {
+            starboard: null,
+            port: null
+        };
+        back = true;
+        if(starboard[i-1]){
+            if(starboard[i-1].properties.distance < starboard[i].properties.distance){
+                front.starboard = starboard[i-1].geometry.coordinates[starboard[i-1].geometry.coordinates.length-2]
+                front.port = port[i-1].geometry.coordinates[port[i-1].geometry.coordinates.length-2]
+            }
+        }
+        if(starboard[i+1]){
+            if(starboard[i+1].properties.distance > starboard[i].properties.distance){
+                back = false
+            }
+        }
+        polygons.push(RouteWaypointLeg.createCorridorPolygons(starboard[i], port[i], front, back));
+    }
+
+}
+
+
 
 function curveWaypointLeg(W1, W2, W3) {
     // No curve is needed if the turn radius is 0 or less
@@ -280,4 +307,6 @@ export {
     calculateCircleCenterCoordinates as calculateCircleCenterCoordinates_TEST,
     determineBearingOrder as determineBearingOrder_TEST,
     curveWaypointLeg as curveWaypointLeg_TEST,
+    createCorridors as createCorridors_TEST,
+    RouteToGeoJSON as RouteToGeoJSON_TEST
 };
