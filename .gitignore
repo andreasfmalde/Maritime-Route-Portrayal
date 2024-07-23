@@ -2,3 +2,4 @@ node_modules
 .vscode
 route.json
 .DS_Store
+coverage
