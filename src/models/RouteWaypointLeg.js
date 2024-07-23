@@ -228,17 +228,30 @@ export class RouteWaypointLeg{
         }
     }
 
-    static createCorridorPolygons(starboardLine, portLine){
+    static createCorridorPolygons(starboardLine, portLine, front=null, back=true){
         if(starboardLine.geometry?.coordinates === undefined || portLine.geometry?.coordinates === undefined
             || starboardLine.geometry?.type !== 'LineString' || portLine.geometry?.type !== 'LineString')
         {
             throw new Error('Invalid input. Must be lineString.');
         }
+        const starboard = [...starboardLine.geometry.coordinates];
+        const port = [...portLine.geometry.coordinates];
+        // If back is false, the back coordinates should be removed before
+        // drawing the polygon.
+        if(!back){
+            starboard.pop();
+            port.pop();
+        }
+        // If front has valid coordinates, they should be added to the front of the
+        // starboard and port arrays before drawing the polygon.
+        if(front?.starboard) starboard.unshift(front.starboard);
+        if(front?.port) port.unshift(front.port);
+
         const coordinates = [];
-        let reverseArray = [...portLine.geometry.coordinates].reverse();
-        coordinates.push(...starboardLine.geometry.coordinates)
+        let reverseArray = [...port].reverse();
+        coordinates.push(...starboard)
         coordinates.push(...reverseArray);
-        coordinates.push(starboardLine.geometry.coordinates[0]);
+        coordinates.push(starboard[0]);
 
         let type = starboardLine.properties.type === "route-leg-XTDL" ? "route-leg-corridor-xtdl" : "route-leg-corridor-cl";
         return polygon([coordinates],{
