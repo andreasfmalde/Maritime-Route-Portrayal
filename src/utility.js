@@ -24,12 +24,13 @@ export function recursiveNamespaceTrimmer(obj) {
 }
 
 export function parseXML(xml) {
-    const object = JSON.parse(xml2json(xml, { compact: true, spaces: 4 }));
-    if (!object) {
+    try{
+        const object = JSON.parse(xml2json(xml, { compact: true, spaces: 4 }));
+        recursiveNamespaceTrimmer(object);
+        return object;
+    }catch (e){
         return null;
     }
-    recursiveNamespaceTrimmer(object);
-    return object;
 }
 
 export function getCoordinates(point) {
