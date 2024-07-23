@@ -242,6 +242,39 @@ describe('RouteWaypointLeg tests', () => {
         expect(polygon.geometry.coordinates).toEqual(expectedList);
         expect(polygon.properties.type).toBe('route-leg-corridor-cl');
 
+
+        // Test to make sure front coordinates are added to the polygon
+        starboard = lineString([[1,1],[2,2],[3,3]],{
+            type: 'route-leg-XTDL',
+            routeLegID: 'RTE.WPT.LEG.1',
+            distance: 100,
+        });
+        port = lineString([[1,3],[2,4],[3,5]],{
+            type: 'route-leg-XTDL',
+            routeLegID: 'RTE.WPT.LEG.1',
+            distance: 100,
+        });
+        polygon = RouteWaypointLeg.createCorridorPolygons(starboard,port,{starboard:[1,0],port:[1,2]});
+        expect(polygon.geometry.coordinates).toEqual([[[1,0],[1,1],[2,2],[3,3],[3,5],[2,4],[1,3],[1,2],[1,0]]]);
+
+
+        // Test to make sure back coordinates are removed before
+        // making the polygon.
+        starboard = lineString([[1,1],[2,2],[3,3]],{
+            type: 'route-leg-XTDL',
+            routeLegID: 'RTE.WPT.LEG.1',
+            distance: 100,
+        });
+        port = lineString([[1,3],[2,4],[3,5]],{
+            type: 'route-leg-XTDL',
+            routeLegID: 'RTE.WPT.LEG.1',
+            distance: 100,
+        });
+        polygon = RouteWaypointLeg.createCorridorPolygons(starboard,port,null,false);
+        expect(polygon.geometry.coordinates).toEqual([[[1,1],[2,2],[2,4],[1,3],[1,1]]]);
+
+
+
     });
 
 
