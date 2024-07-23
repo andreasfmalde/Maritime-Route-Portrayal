@@ -9,11 +9,14 @@ export function RouteToGeoJSON(waypointLegs, waypoints, actionPoints) {
     const tangentPoints = [];
     const geoJSON = featureCollection([]);
 
+    if(waypoints == null || waypoints.length === 0 ){
+        throw new Error('No waypoints found');
+    }
 
     // Handle special case when the route only contains two waypoints
     if (waypoints.length === 2) {
         let leg;
-        if (Object.keys(waypointLegs).length === 1) {
+        if (waypointLegs !== null && Object.keys(waypointLegs).length === 1) {
             leg = waypointLegs[Object.keys(waypointLegs)[0]];
         } else {
             leg = new RouteWaypointLeg(waypoints[0].getRouteWaypointLeg() ||
@@ -304,5 +307,6 @@ export {
     calculateCircleCenterCoordinates as calculateCircleCenterCoordinates_TEST,
     determineBearingOrder as determineBearingOrder_TEST,
     curveWaypointLeg as curveWaypointLeg_TEST,
-    createCorridors as createCorridors_TEST
+    createCorridors as createCorridors_TEST,
+    RouteToGeoJSON as RouteToGeoJSON_TEST
 };

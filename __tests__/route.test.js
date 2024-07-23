@@ -1,11 +1,11 @@
-import { lineString, polygon } from '@turf/turf';
-import { RouteWaypoint } from "../src/models";
+import { lineString } from '@turf/turf';
+import { createActionPoint, RouteWaypoint, RouteWaypointLeg } from "../src/models";
 import { waypoints, curveWaypointLegResult } from "../data/test/testData";
 import { getCoordinates } from "../src/utility";
 import {
     convertTo360_TEST, convertToNorthBearing_TEST,
     calculateMidLineBearing_TEST, determineBearingOrder_TEST,
-    curveWaypointLeg_TEST, createCorridors_TEST
+    curveWaypointLeg_TEST, createCorridors_TEST, RouteToGeoJSON_TEST
 } from "../src/route";
 
 
@@ -212,5 +212,97 @@ describe('createCorridors tests',()=>{
         expect(polygons[1].geometry.coordinates).toEqual([[[2,2],[2,2],[3,3],[4,4],[-1,-1],[0,0],[1,1],[-1,-1],[2,2]]]);
         expect(polygons[2].geometry.coordinates).toEqual([[[3,3],[4,4],[5,5],[0,0],[1,1],[2,2],[3,3]]]);
 
+    });
+});
+
+
+describe('RouteToGeoJSON method',()=>{
+
+    let waypoints, legs, actionpoints;
+
+    beforeEach(()=>{
+        waypoints = [];
+        legs = {};
+        actionpoints = [];
+        for(let i = 1; i< 6;i++){
+            waypoints.push(new RouteWaypoint(
+                i,
+                "WPT"+i,
+                "Waypoint "+i,
+                [i,i],
+                false,
+                3.0,
+                "WPT.LEG."+i,
+                "",
+                {}
+            ));
+        }
+        for(let i = 1; i< 6;i++){
+            legs["WPT.LEG."+i] = new RouteWaypointLeg(
+                "WPT.LEG."+i, 100, 100, 150,150,20,20,1,
+                0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
+                '','',{}
+            );
+        }
+
+        actionpoints.push(createActionPoint(
+            "point","RTE.ACT.PT.1",1,"Actionpoint 1",[2.1,2.1],1.1,2.0,0,'',{}
+        ).toGeoJSON());
+    });
+
+    test('error is thrown when no waypoints are specified',()=>{
+        expect(()=>{RouteToGeoJSON_TEST({},null,[])}).toThrow('No waypoints found');
+        expect(()=>{RouteToGeoJSON_TEST({},[],[])}).toThrow('No waypoints found');
+    });
+
+    test('handle special case when the route only contains two waypoints',()=>{
+        let reducedWaypoints = [];
+        let leg = {
+            'WPT.LEG.1': legs['WPT.LEG.1']
+        }
+        reducedWaypoints.push(waypoints[0]);
+        reducedWaypoints.push(waypoints[1]);
+       
+        let result = RouteToGeoJSON_TEST(leg,reducedWaypoints,actionpoints);
+        expect(result.features.length).toBe(4);
+        expect(result.features[0].properties.id).toEqual('WPT.LEG.1');
+        expect(result.features[1].properties.id).toBe(1);
+        expect(result.features[2].properties.id).toBe(2);
+        expect(result.features[3].properties.id).toEqual('RTE.ACT.PT.1');
+
+
+        reducedWaypoints[0].routeWaypointLeg = '';
+        reducedWaypoints[1].routeWaypointLeg = '';
+        result = RouteToGeoJSON_TEST(null,reducedWaypoints,actionpoints);
+        expect(result.features.length).toBe(4);
+        expect(result.features[0].properties.id).toEqual('RTE.WPT.LEG.0');
+    });
+
+    test('the route is converted to a geojson object with all features included',()=>{
+        waypoints[3].routeWaypointTurnRadius = 0.0;
+        let result = RouteToGeoJSON_TEST(legs,waypoints,actionpoints);
+        expect(result).not.toBeNull();
+        expect(result.type).toBe('FeatureCollection');
+        expect(result.features.length).toBe(34);
+
+        let wps=[],lgs=[],aps=[],xtdl=[],
+        cl=[],xtdlPoly=[],clPoly=[];
+        for(let feature of result.features){
+            if(feature.properties.type === 'waypoint') wps.push(feature);
+            else if(feature.properties.type === 'route-leg') lgs.push(feature);
+            else if(feature.properties.type === 'actionpoint-point') aps.push(feature);
+            else if(feature.properties.type === 'route-leg-XTDL') xtdl.push(feature);
+            else if(feature.properties.type === 'route-leg-CL') cl.push(feature);
+            else if(feature.properties.type === 'route-leg-corridor-xtdl') xtdlPoly.push(feature);
+            else if(feature.properties.type === 'route-leg-corridor-cl') clPoly.push(feature);
+        }
+
+        expect(wps.length).toBe(5);
+        expect(lgs.length).toBe(4);
+        expect(aps.length).toBe(1);
+        expect(xtdl.length).toBe(8);
+        expect(cl.length).toBe(8);
+        expect(xtdlPoly.length).toBe(4);
+        expect(clPoly.length).toBe(4);
     });
 });
