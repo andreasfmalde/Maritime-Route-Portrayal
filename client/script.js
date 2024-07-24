@@ -24,7 +24,7 @@ const map = new maplibregl.Map({
     center: [16, 56.7304],
     zoom: 5
 })
-
+import {S421ToGeoJSON, RTZtoGeoJSON, createLayers} from '../dist/routePortrayal.esm.js';
 let geojson;
 
 try {
@@ -33,7 +33,7 @@ try {
     if (data == null) {
         throw new Error('No data');
     }
-    geojson = routePortrayal.S421ToGeoJSON(text);
+    geojson = S421ToGeoJSON(text);
    
     document.querySelector('#info').textContent = '';
 } catch (e) {
@@ -59,9 +59,9 @@ map.on('load', async () => {
             const text = e.target.result;
             try{
                 if(select.value === 'rtz'){
-                    geojson = routePortrayal.RTZtoGeoJSON(text);
+                    geojson = RTZtoGeoJSON(text);
                 }else{
-                    geojson = routePortrayal.S421ToGeoJSON(text);
+                    geojson = S421ToGeoJSON(text);
                 }
             }catch(e){
                 document.querySelector('#info').textContent = 'Invalid file format: '+ e ;
@@ -76,7 +76,7 @@ map.on('load', async () => {
                         'type': 'geojson',
                         'data': geojson
                     });
-                    const layers = routePortrayal.createLayers('geojsonSource');
+                    const layers = createLayers('geojsonSource');
                     for (let layer of layers) {
                         map.addLayer(layer);
                     }
@@ -92,7 +92,7 @@ map.on('load', async () => {
             'type': 'geojson',
             'data': geojson
         });
-        const layers = routePortrayal.createLayers('geojsonSource');
+        const layers = createLayers('geojsonSource');
         for (let layer of layers) {
             map.addLayer(layer);
         }
