@@ -3,24 +3,6 @@ import * as constants from './constants.js';
 
 export function createLayers(sourceName, layerIdPrefix = ""){
     return [
-        {
-            'id': layerIdPrefix + 'route-leg-corridor-cl',
-            'type': 'fill',
-            'source': sourceName,
-            'filter': ['==', 'type', 'route-leg-corridor-cl'],
-            'paint': {
-                'fill-color': constants.CL_CORRIDOR_COLOR
-            }
-        },
-        {
-            'id': layerIdPrefix + 'route-leg-corridor-xtdl',
-            'type': 'fill',
-            'source': sourceName,
-            'filter': ['==', 'type', 'route-leg-corridor-xtdl'],
-            'paint': {
-                'fill-color': constants.XTDL_CORRIDOR_COLOR
-            }
-        },
         {   // ROUTE LEG - LINE
             'id': layerIdPrefix + 'route-leg-line',
             'type': 'line',
@@ -148,3 +130,26 @@ export function createLayers(sourceName, layerIdPrefix = ""){
     ];
 }
 
+
+export function createCorridorLayers(sourceName, layerIdPrefix = ""){
+    return [
+        {   // ROUTE LEG CORRIDOR - CL (Only for showcasing the polygons. Could be removed)
+            'id': layerIdPrefix + 'route-leg-corridor-cl',
+            'type': 'fill',
+            'source': sourceName,
+            'filter': ['==', 'type', 'route-leg-corridor-cl'],
+            'paint': {
+                'fill-color': constants.CL_CORRIDOR_COLOR
+            }
+        },
+        {   // ROUTE LEG CORRIDOR - XTDL (Only for showcasing the polygons. Could be removed)
+            'id': layerIdPrefix + 'route-leg-corridor-xtdl',
+            'type': 'fill',
+            'source': sourceName,
+            'filter': ['==', 'type', 'route-leg-corridor-xtdl'],
+            'paint': {
+                'fill-color': constants.XTDL_CORRIDOR_COLOR
+            }
+        }
+    ];
+}
