@@ -24,7 +24,7 @@ const map = new maplibregl.Map({
     center: [16, 56.7304],
     zoom: 5
 })
-import {S421ToGeoJSON, RTZtoGeoJSON, createLayers} from '../dist/routePortrayal.esm.js';
+import {S421ToGeoJSON, RTZtoGeoJSON, createLayers, createCorridorLayers} from '../dist/routePortrayal.esm.mjs';
 let geojson;
 
 try {
@@ -76,10 +76,17 @@ map.on('load', async () => {
                         'type': 'geojson',
                         'data': geojson
                     });
-                    const layers = createLayers('geojsonSource');
-                    for (let layer of layers) {
-                        map.addLayer(layer);
+                    if(map.getStyle().layers.length < 2){
+                        const corridorLayers = createCorridorLayers('geojsonSource');
+                        for (let layer of corridorLayers) {
+                            map.addLayer(layer);
+                        }
+                        const layers = createLayers('geojsonSource');
+                        for (let layer of layers) {
+                            map.addLayer(layer);
+                        }
                     }
+                    
                 }
 
             }
@@ -92,9 +99,15 @@ map.on('load', async () => {
             'type': 'geojson',
             'data': geojson
         });
-        const layers = createLayers('geojsonSource');
-        for (let layer of layers) {
-            map.addLayer(layer);
+        if(map.getStyle().layers.length < 2){
+            const corridorLayers = createCorridorLayers('geojsonSource');
+            for (let layer of corridorLayers) {
+                map.addLayer(layer);
+            }
+            const layers = createLayers('geojsonSource');
+            for (let layer of layers) {
+                map.addLayer(layer);
+            }
         }
     }
 });

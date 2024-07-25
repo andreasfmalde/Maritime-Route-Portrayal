@@ -6,7 +6,7 @@ module.exports = [
         entry: './src/main.js',
         output: {
             path: path.resolve(__dirname, 'dist'),
-            filename: 'routePortrayal.esm.js',
+            filename: 'routePortrayal.esm.mjs',
             library: {
                 type: 'module',
             },
